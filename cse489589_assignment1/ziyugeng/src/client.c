@@ -34,77 +34,89 @@
 #define BUFFER_SIZE 256
 
 int connect_to_host(char *server_ip, char *server_port);
-void start_client(char* port_str);
+void start_client(char *server_ip, char *server_port);
 
+/**
+* main function
+*
+* @param  argc Number of arguments
+* @param  argv The argument list
+* @return 0 EXIT_SUCCESS
+*/
 int main(int argc, char **argv)
 {
-    if(argc != 3) {
-        printf("Usage:%s [ip] [port]\n", argv[0]);
-        exit(-1);
-    }
+	if(argc != 3) {
+		printf("Usage:%s [ip] [port]\n", argv[0]);
+		exit(-1);
+	}
 	
-    start_client(argv[2]);  // we start client passing the port number
-
-    return 0;  // safely exit program
+	start_client(argv[1], argv[2]);
+	
+	return 0;
 }
 
-void start_client(char* port_str) {
-    char* server_ip = "127.0.0.1";  // assuming localhost for demonstration
-
-    int server;
-    server = connect_to_host(server_ip, port_str);
-
-    while(TRUE){
-        printf("\n[PA1-Client@CSE489/589]$ ");
-        fflush(stdout);
-
-        char *msg = (char*) malloc(sizeof(char)*MSG_SIZE);
-        memset(msg, '\0', MSG_SIZE);
-        if(fgets(msg, MSG_SIZE-1, stdin) == NULL) 
-            exit(-1);
-
-        printf("I got: %s(size:%d chars)", msg, strlen(msg));
-
-        printf("\nSENDing it to the remote server ... ");
-        if(send(server, msg, strlen(msg), 0) == strlen(msg))
-            printf("Done!\n");
-        fflush(stdout);
-
-        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-        memset(buffer, '\0', BUFFER_SIZE);
-
-        if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-            printf("Server responded: %s", buffer);
-            fflush(stdout);
-        }
-
-        free(msg);
-        free(buffer);
-    }
+void start_client(char *server_ip, char *server_port)
+{
+	int server;
+	server = connect_to_host(server_ip, server_port);
+	
+	while(TRUE){
+		printf("\n[PA1-Client@CSE489/589]$ ");
+		fflush(stdout);
+		
+		char *msg = (char*) malloc(sizeof(char)*MSG_SIZE);
+		memset(msg, '\0', MSG_SIZE);
+		if(fgets(msg, MSG_SIZE-1, stdin) == NULL)
+			exit(-1);
+		
+		printf("I got: %s(size:%d chars)", msg, strlen(msg));
+		
+		printf("\nSENDing it to the remote server ... ");
+		if(send(server, msg, strlen(msg), 0) == strlen(msg))
+			printf("Done!\n");
+		fflush(stdout);
+		
+		/* Initialize buffer to receive response */
+		char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+		memset(buffer, '\0', BUFFER_SIZE);
+		
+		if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+			printf("Server responded: %s", buffer);
+			fflush(stdout);
+		}
+		
+		free(msg);
+		free(buffer);
+	}
 }
 
 int connect_to_host(char *server_ip, char* server_port)
 {
-    int fdsocket;
-    struct addrinfo hints, *res;
+	int fdsocket;
+	struct addrinfo hints, *res;
 
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
+	/* Set up hints structure */	
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
 
-    if (getaddrinfo(server_ip, server_port, &hints, &res) != 0)
-        perror("getaddrinfo failed");
+	/* Fill up address structures */	
+	if (getaddrinfo(server_ip, server_port, &hints, &res) != 0)
+		perror("getaddrinfo failed");
 
-    fdsocket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if(fdsocket < 0)
-        perror("Failed to create socket");
-
-    if(connect(fdsocket, res->ai_addr, res->ai_addrlen) < 0)
-        perror("Connect failed");
+	/* Socket */
+	fdsocket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	if(fdsocket < 0)
+		perror("Failed to create socket");
 	
-    freeaddrinfo(res);
+	/* Connect */
+	if(connect(fdsocket, res->ai_addr, res->ai_addrlen) < 0)
+		perror("Connect failed");
+	
+	freeaddrinfo(res);
 
-    return fdsocket;
+	return fdsocket;
 }
+
 
 // The above code refers to the pa1_demo_code-client.c

@@ -31,7 +31,8 @@
 #include "../include/client.h"
 
 void start_server(char* port);
-void start_client(char* port);
+void start_client(char *server_ip, char *server_port);
+
 
 /**
  * main function
@@ -61,7 +62,7 @@ int main(int argc, char **argv)
 		start_server(argv[2]);
 	}
 	else if(argv[1][0] == 'c'){
-		start_client(argv[2]);
+		start_client("127.0.0.1", argv[2]);
 	}
 	else{
 		printf("Error: Please use 's' for server and 'c' for client.\n");
