@@ -48,20 +48,19 @@
 
 char* external_ip() {
     int udp_socket;
-    char *ip_buf = malloc(INET_ADDRSTRLEN);
+    char *ip = malloc(INET_ADDRSTRLEN);
     struct sockaddr_in server_addr;
     struct sockaddr_in client_addr;
     socklen_t addr_len = sizeof(client_addr);
 
-    if(!ip_buf) {
+    if(!ip) {
         perror("Malloc failed");
         return NULL;
     }
 
     udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
     if(udp_socket < 0) {
-        perror("Cannot create socket");
-        free(ip_buf);
+        free(ip);
         return NULL;
     }
 
@@ -70,29 +69,29 @@ char* external_ip() {
     server_addr.sin_addr.s_addr = inet_addr(google_ip);
     server_addr.sin_port = htons(google_port);
 
-    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Connect failed");
-        close(udp_socket);
-        free(ip_buf);
-        return NULL;
-    }
+    // if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+    //     perror("Connect failed");
+    //     close(udp_socket);
+    //     free(ip);
+    //     return NULL;
+    // }
 
-    if(getsockname(udp_socket, (struct sockaddr*)&client_addr, &addr_len) < 0) {
-        perror("Getsockname failed");
-        close(udp_socket);
-        free(ip_buf);
-        return NULL;
-    }
+    // if(getsockname(udp_socket, (struct sockaddr*)&client_addr, &addr_len) < 0) {
+    //     perror("Getsockname failed");
+    //     close(udp_socket);
+    //     free(ip);
+    //     return NULL;
+    // }
 
-    if(inet_ntop(AF_INET, &(client_addr.sin_addr), ip_buf, INET_ADDRSTRLEN) == NULL) {
-        perror("Error converting IP to string");
-        close(udp_socket);
-        free(ip_buf);
-        return NULL;
-    }
+    // if(inet_ntop(AF_INET, &(client_addr.sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
+    //     perror("Error converting IP to string");
+    //     close(udp_socket);
+    //     free(ip);
+    //     return NULL;
+    // }
 
     close(udp_socket);
-    return ip_buf;
+    return ip;
 }
 
 void start_server(char *port_str) {
