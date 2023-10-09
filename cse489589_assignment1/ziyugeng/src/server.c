@@ -36,19 +36,8 @@
 #define TRUE 1
 #define CMD_SIZE 100
 #define BUFFER_SIZE 256
+#define your_ubit_name "ziyugeng"
 
-void execute_shell_command(const char* command_str) {
-    printf("DEBUG: Executing command: %s\n", command_str);  // Debug print
-    
-    if(strcmp(command_str, "AUTHOR") == 0) {
-        cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
-        cse4589_print_and_log("I, ziyugeng and ttu4, have read and understood the course academic integrity policy.\n");
-        cse4589_print_and_log("[AUTHOR:END]\n");
-    } else {
-        cse4589_print_and_log("[%s:ERROR]\n", command_str);
-        cse4589_print_and_log("[%s:END]\n", command_str);
-    }
-}
 
 void start_server(char *port_str) {
     int server_socket, head_socket, selret, sock_index, fdaccept=0, caddr_len;
@@ -124,10 +113,10 @@ void start_server(char *port_str) {
 						
 						//Process PA1 commands here ...
 						// AUTHOR cmd
-						
-						if(cmd == "AUTHOR") {
+
+						if(strcmp(cmd, "AUTHOR") == 0) {
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
-							cse4589_print_and_log("I, ziyugeng and ttu4, have read and understood the course academic integrity policy.\n");
+							cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", your_ubit_name);
 							cse4589_print_and_log("[AUTHOR:END]\n");
 							} else {
 								cse4589_print_and_log("[%s:ERROR]\n", cmd);

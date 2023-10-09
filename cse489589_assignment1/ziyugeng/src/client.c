@@ -51,14 +51,6 @@ void start_client(char *server_ip, char *server_port)
 			exit(-1);
 		
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
-		if(strcmp(msg, "AUTHOR") == 0) {
-							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
-							cse4589_print_and_log("I, ziyugeng and ttu4, have read and understood the course academic integrity policy.\n");
-							cse4589_print_and_log("[AUTHOR:END]\n");
-							} else {
-								cse4589_print_and_log("[%s:ERROR]\n", msg);
-								cse4589_print_and_log("[%s:END]\n", msg);
-								}
 		
 		printf("\nSENDing it to the remote server ... ");
 		if(send(server, msg, strlen(msg), 0) == strlen(msg))
