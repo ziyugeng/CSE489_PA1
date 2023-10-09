@@ -121,8 +121,10 @@ void start_server(char *port_str) {
 							exit(-1);
 						
 						printf("\nI got: %s\n", cmd);
-
-
+						
+						//Process PA1 commands here ...
+						// AUTHOR cmd
+						
 						if(cmd == "AUTHOR") {
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
 							cse4589_print_and_log("I, ziyugeng and ttu4, have read and understood the course academic integrity policy.\n");
@@ -131,9 +133,6 @@ void start_server(char *port_str) {
 								cse4589_print_and_log("[%s:ERROR]\n", cmd);
 								cse4589_print_and_log("[%s:END]\n", cmd);
 								}
-						
-						// AUTHOR cmd
-						//Process PA1 commands here ...
 						
 						free(cmd);
 					}
