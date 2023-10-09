@@ -71,30 +71,30 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-// void execute_command(char* cmd) {
-//     char *command_str = strtok(cmd, " \n");
+void execute_command(char* cmd) {
+    char *command_str = strtok(cmd, " \n");
 
-//     if(strcmp(command_str, "AUTHOR") == 0) {
-//         author_command();
-//     } 
-//     // Add other command comparisons here, e.g.:
-//     // else if(strcmp(command_str, "ANOTHER_COMMAND") == 0) {
-//     //     another_command();
-//     // }
-//     else {
-//         printf("[%s:ERROR]\n", command_str);
-//         printf("[%s:END]\n", command_str);
-//     }
-// }
+    if(strcmp(command_str, "AUTHOR") == 0) {
+        author_command();
+    } 
+    // Add other command comparisons here, e.g.:
+    // else if(strcmp(command_str, "ANOTHER_COMMAND") == 0) {
+    //     another_command();
+    // }
+    else {
+        printf("[%s:ERROR]\n", command_str);
+        printf("[%s:END]\n", command_str);
+    }
+}
 
-// void author_command() {
-//     char* command = "AUTHOR";
-//     char* ubit = "ziyugeng";
+void author_command() {
+    char* command = "AUTHOR";
+    char* ubit = "ziyugeng";
 
-//     printf("[%s:SUCCESS]\n", command);
-//     printf("I, %s, have read and understood the course academic integrity policy.\n", ubit);
-//     printf("[%s:END]\n", command);
-// }
+    printf("[%s:SUCCESS]\n", command);
+    printf("I, %s, have read and understood the course academic integrity policy.\n", ubit);
+    printf("[%s:END]\n", command);
+}
 
 
 
