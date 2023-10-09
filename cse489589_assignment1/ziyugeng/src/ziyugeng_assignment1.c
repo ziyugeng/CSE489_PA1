@@ -72,23 +72,27 @@ int main(int argc, char **argv)
 
 void execute_command(char* cmd) {
     char *command_str = strtok(cmd, " \n");
-    char *uppercase_command_str = strdup(command_str);
-    
-    // Convert to UPPERCASE
-    for(int i = 0; uppercase_command_str[i]; i++){
-        uppercase_command_str[i] = toupper(uppercase_command_str[i]);
-    }
 
-    if(strcmp(uppercase_command_str, "AUTHOR") == 0) {
+    if(strcmp(command_str, "AUTHOR") == 0) {
         author_command();
-    }
-    // Additional command handling here
+    } 
+    // Add other command comparisons here, e.g.:
+    // else if(strcmp(command_str, "ANOTHER_COMMAND") == 0) {
+    //     another_command();
+    // }
     else {
-        cse4589_print_and_log("[%s:ERROR]\n", uppercase_command_str);
-        cse4589_print_and_log("[%s:END]\n", uppercase_command_str);
+        printf("[%s:ERROR]\n", command_str);
+        printf("[%s:END]\n", command_str);
     }
-    
-    free(uppercase_command_str);  // Free the dynamically allocated string
+}
+
+void author_command() {
+    char* command = "AUTHOR";
+    char* ubit = "ziyugeng";
+
+    printf("[%s:SUCCESS]\n", command);
+    printf("I, %s, have read and understood the course academic integrity policy.\n", ubit);
+    printf("[%s:END]\n", command);
 }
 
 
