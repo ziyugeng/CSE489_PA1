@@ -1,6 +1,6 @@
 /**
 * @client
-* @author  Swetank Kumar Saha <swetankk@buffalo.edu>, Shivang Aggarwal <shivanga@buffalo.edu>
+* @author  Ziyu Geng <ziyugeng@buffalo.edu>, Tianrui Tu <ttu4@buffalo.edu>
 * @version 1.0
 *
 * @section LICENSE

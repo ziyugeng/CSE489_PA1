@@ -1,6 +1,6 @@
 /**
 * @server
-* @author  Swetank Kumar Saha <swetankk@buffalo.edu>, Shivang Aggarwal <shivanga@buffalo.edu>
+* @author  Ziyu Geng <ziyugeng@buffalo.edu>, Tianrui Tu <ttu4@buffalo.edu>
 * @version 1.0
 *
 * @section LICENSE
@@ -36,7 +36,8 @@
 #define TRUE 1
 #define CMD_SIZE 100
 #define BUFFER_SIZE 256
-#define your_ubit_name "ziyugeng and ttu4"
+#define ubit "ziyugeng and ttu4"
+#define ip_addr "8.8.8.8"
 
 
 void start_server(char *port_str) {
@@ -113,16 +114,26 @@ void start_server(char *port_str) {
 						cmd[strcspn(cmd, "\n")] = 0;
 						
 						//Process PA1 commands here ...
-						// AUTHOR cmd
 
-						if(strcmp(cmd, "AUTHOR") == 0) {
+						if(strcmp(cmd, "AUTHOR") == 0) { // AUTHOR
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
-							cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", your_ubit_name);
+							cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
 							cse4589_print_and_log("[AUTHOR:END]\n");
-							} else {
-								cse4589_print_and_log("[%s:ERROR]\n", cmd);
-								cse4589_print_and_log("[%s:END]\n", cmd);
-								}
+							} 
+						else if (strcmp(cmd, "IP") == 0){ // IP
+							cse4589_print_and_log("[IP:SUCCESS]\n");
+							cse4589_print_and_log("IP:%s\n", ip_addr);
+							cse4589_print_and_log("[IP:END]\n");
+						}
+						else if (strcmp(cmd, "PORT") == 0){
+							cse4589_print_and_log("[PORT:SUCCESS]\n");
+							cse4589_print_and_log("PORT:%s\n", port_str);
+							cse4589_print_and_log("[PORT:END]\n");
+						}
+						else {
+							cse4589_print_and_log("[%s:ERROR]\n", cmd);
+							cse4589_print_and_log("[%s:END]\n", cmd);
+							}
 						
 						free(cmd);
 					}
@@ -168,8 +179,8 @@ void start_server(char *port_str) {
 			}
 		}
 	}
-    // Close the socket before we finish
     close(server_socket);
 }
+// The above code refers to the pa1_demo_code-servert.c
 
 
