@@ -32,7 +32,6 @@
 
 void start_server(char* port);
 void start_client(char *server_ip, char *server_port);
-void author_command(void);
 
 
 /**
@@ -69,31 +68,6 @@ int main(int argc, char **argv)
 		printf("Error: Please use 's' for server and 'c' for client.\n");
 	}
 	return 0;
-}
-
-void execute_command(char* cmd) {
-    char *command_str = strtok(cmd, " \n");
-
-    if(strcmp(command_str, "AUTHOR") == 0) {
-        author_command();
-    } 
-    // Add other command comparisons here, e.g.:
-    // else if(strcmp(command_str, "ANOTHER_COMMAND") == 0) {
-    //     another_command();
-    // }
-    else {
-        printf("[%s:ERROR]\n", command_str);
-        printf("[%s:END]\n", command_str);
-    }
-}
-
-void author_command() {
-    char* command = "AUTHOR";
-    char* ubit = "ziyugeng";
-
-    printf("[%s:SUCCESS]\n", command);
-    printf("I, %s, have read and understood the course academic integrity policy.\n", ubit);
-    printf("[%s:END]\n", command);
 }
 
 
