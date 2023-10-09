@@ -46,47 +46,6 @@
 // step4: Close the dummy UDP socket.
 // cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
 
-char* external_ip() {
-    char *local_ip = malloc(INET_ADDRSTRLEN);
-
-    // Step 1
-    int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
-
-    // Step 2
-    struct sockaddr_in server_addr;
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr("8.8.8.8");
-    server_addr.sin_port = htons(53);
-    
-    // if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-    //     perror("Connect failed");
-    //     close(udp_socket);
-    //     free(local_ip);
-    //     return NULL;
-    // }
-
-    // Step 3
-    struct sockaddr_in local_addr;
-    socklen_t addr_len = sizeof(local_addr);
-    if(getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len) < 0) {
-        perror("Getsockname failed");
-        close(udp_socket);
-        free(local_ip);
-        return NULL;
-    }
-
-    if(inet_ntop(AF_INET, &(local_addr.sin_addr), local_ip, INET_ADDRSTRLEN) == NULL) {
-        perror("Error converting IP to string");
-        close(udp_socket);
-        free(local_ip);
-        return NULL;
-    }
-
-    // Step 4
-    close(udp_socket);
-    return local_ip;
-}
 
 void start_server(char *port_str) {
     int server_socket, head_socket, selret, sock_index, fdaccept=0, caddr_len;
@@ -171,7 +130,7 @@ void start_server(char *port_str) {
 						else if (strcmp(cmd, "IP") == 0){ // IP
 						char* ip_addr = external_ip();
 							cse4589_print_and_log("[IP:SUCCESS]\n");
-							cse4589_print_and_log("IP:%s\n", ip_addr);
+							cse4589_print_and_log("IP:%s\n", google_ip);
 							cse4589_print_and_log("[IP:END]\n");
 						}
 						else if (strcmp(cmd, "PORT") == 0){ //PORT
