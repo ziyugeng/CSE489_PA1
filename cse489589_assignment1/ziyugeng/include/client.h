@@ -8,7 +8,7 @@
 
 int connect_to_host(char *server_ip, char *server_port);
 
-void start_client(const char* ip, const char* port);
+void start_client(char* port);
 
 #endif
 
