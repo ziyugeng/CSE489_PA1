@@ -70,20 +70,27 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-// void execute_command(char* cmd) {
-//     char *command_str = strtok(cmd, " \n");
+void execute_command(char* cmd) {
+    char *command_str = strtok(cmd, " \n");
+    char *uppercase_command_str = strdup(command_str);
+    
+    // Convert to UPPERCASE
+    for(int i = 0; uppercase_command_str[i]; i++){
+        uppercase_command_str[i] = toupper(uppercase_command_str[i]);
+    }
 
-//     if(strcmp(command_str, "AUTHOR") == 0) {
-//         author_command();
-//     }
-//     // else if(strcmp(command_str, "IP") == 0) {
-//     //     ip_command();
-//     // }
-//     else {
-//         printf("[%s:ERROR]\n", command_str);
-//         printf("[%s:END]\n", command_str);
-//     }
-// }
+    if(strcmp(uppercase_command_str, "AUTHOR") == 0) {
+        author_command();
+    }
+    // Additional command handling here
+    else {
+        cse4589_print_and_log("[%s:ERROR]\n", uppercase_command_str);
+        cse4589_print_and_log("[%s:END]\n", uppercase_command_str);
+    }
+    
+    free(uppercase_command_str);  // Free the dynamically allocated string
+}
+
 
 
 // // void ip_command() {
@@ -101,12 +108,4 @@ int main(int argc, char **argv)
 // //     }
 // // }
 
-// void author_command() {
-//     char* command = "AUTHOR";
-//     char* ubit = "ziyugeng";
-
-//     cse4589_print_and_log("[%s:SUCCESS]\n", command);
-//     cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
-//     cse4589_print_and_log("[%s:END]\n", command);
-// }
 
