@@ -51,11 +51,6 @@ char* external_ip() {
 
     // Step 1
     int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
-    // if(udp_socket < 0) {
-    //     perror("Cannot create socket");
-    //     free(local_ip);
-    //     return NULL;
-    // }
 
     // Step 2
     struct sockaddr_in server_addr;
@@ -64,12 +59,12 @@ char* external_ip() {
     server_addr.sin_addr.s_addr = inet_addr("8.8.8.8");
     server_addr.sin_port = htons(53);
     
-    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Connect failed");
-        close(udp_socket);
-        free(local_ip);
-        return NULL;
-    }
+    // if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+    //     perror("Connect failed");
+    //     close(udp_socket);
+    //     free(local_ip);
+    //     return NULL;
+    // }
 
     // Step 3
     struct sockaddr_in local_addr;
