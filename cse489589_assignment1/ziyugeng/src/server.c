@@ -51,11 +51,11 @@ char* external_ip() {
 
     // Step 1
     int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
-    if(udp_socket < 0) {
-        perror("Cannot create socket");
-        free(local_ip);
-        return NULL;
-    }
+    // if(udp_socket < 0) {
+    //     perror("Cannot create socket");
+    //     free(local_ip);
+    //     return NULL;
+    // }
 
     // Step 2
     struct sockaddr_in server_addr;
