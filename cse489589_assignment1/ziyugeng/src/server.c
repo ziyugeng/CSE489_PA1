@@ -47,51 +47,50 @@
 // cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
 
 char* external_ip() {
-    int udp_socket;
-    char *ip = malloc(INET_ADDRSTRLEN);
-    struct sockaddr_in server_addr;
-    struct sockaddr_in client_addr;
-    socklen_t addr_len = sizeof(client_addr);
+    char *local_ip = malloc(INET_ADDRSTRLEN);
 
-    if(!ip) {
-        perror("Malloc failed");
-        return NULL;
-    }
-
-    udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    // Step 1
+    int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
     if(udp_socket < 0) {
-        free(ip);
+        perror("Cannot create socket");
+        free(local_ip);
         return NULL;
     }
 
+    // Step 2
+    struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr(google_ip);
-    server_addr.sin_port = htons(google_port);
+    server_addr.sin_addr.s_addr = inet_addr("8.8.8.8");
+    server_addr.sin_port = htons(53);
+    
+    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Connect failed");
+        close(udp_socket);
+        free(local_ip);
+        return NULL;
+    }
 
-    // if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-    //     perror("Connect failed");
-    //     close(udp_socket);
-    //     free(ip);
-    //     return NULL;
-    // }
+    // Step 3
+    struct sockaddr_in local_addr;
+    socklen_t addr_len = sizeof(local_addr);
+    if(getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len) < 0) {
+        perror("Getsockname failed");
+        close(udp_socket);
+        free(local_ip);
+        return NULL;
+    }
 
-    // if(getsockname(udp_socket, (struct sockaddr*)&client_addr, &addr_len) < 0) {
-    //     perror("Getsockname failed");
-    //     close(udp_socket);
-    //     free(ip);
-    //     return NULL;
-    // }
+    if(inet_ntop(AF_INET, &(local_addr.sin_addr), local_ip, INET_ADDRSTRLEN) == NULL) {
+        perror("Error converting IP to string");
+        close(udp_socket);
+        free(local_ip);
+        return NULL;
+    }
 
-    // if(inet_ntop(AF_INET, &(client_addr.sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
-    //     perror("Error converting IP to string");
-    //     close(udp_socket);
-    //     free(ip);
-    //     return NULL;
-    // }
-
+    // Step 4
     close(udp_socket);
-    return ip;
+    return local_ip;
 }
 
 void start_server(char *port_str) {
