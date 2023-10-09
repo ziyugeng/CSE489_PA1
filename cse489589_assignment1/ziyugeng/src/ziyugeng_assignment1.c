@@ -69,43 +69,43 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void execute_command(char* cmd) {
-    char *command_str = strtok(cmd, " \n");
+// void execute_command(char* cmd) {
+//     char *command_str = strtok(cmd, " \n");
 
-    if(strcmp(command_str, "AUTHOR") == 0) {
-        author_command();
-    }
-    // else if(strcmp(command_str, "IP") == 0) {
-    //     ip_command();
-    // }
-    else {
-        printf("[%s:ERROR]\n", command_str);
-        printf("[%s:END]\n", command_str);
-    }
-}
-
-
-// void ip_command() {
-//     char* command_str = "IP";
-//     char* ip_addr = /* function to get IP address */;
-
-//     if(ip_addr != NULL) {
-//         cse4589_print_and_log("[%s:SUCCESS]\n", command_str);
-//         cse4589_print_and_log("IP:%s\n", ip_addr);
-//         cse4589_print_and_log("[%s:END]\n", command_str);
+//     if(strcmp(command_str, "AUTHOR") == 0) {
+//         author_command();
 //     }
+//     // else if(strcmp(command_str, "IP") == 0) {
+//     //     ip_command();
+//     // }
 //     else {
-//         cse4589_print_and_log("[%s:ERROR]\n", command_str);
-//         cse4589_print_and_log("[%s:END]\n", command_str);
+//         printf("[%s:ERROR]\n", command_str);
+//         printf("[%s:END]\n", command_str);
 //     }
 // }
 
-void author_command() {
-    char* command = "AUTHOR";
-    char* ubit = "ziyugeng";
 
-    cse4589_print_and_log("[%s:SUCCESS]\n", command);
-    cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
-    cse4589_print_and_log("[%s:END]\n", command);
-}
+// // void ip_command() {
+// //     char* command_str = "IP";
+// //     char* ip_addr = /* function to get IP address */;
+
+// //     if(ip_addr != NULL) {
+// //         cse4589_print_and_log("[%s:SUCCESS]\n", command_str);
+// //         cse4589_print_and_log("IP:%s\n", ip_addr);
+// //         cse4589_print_and_log("[%s:END]\n", command_str);
+// //     }
+// //     else {
+// //         cse4589_print_and_log("[%s:ERROR]\n", command_str);
+// //         cse4589_print_and_log("[%s:END]\n", command_str);
+// //     }
+// // }
+
+// void author_command() {
+//     char* command = "AUTHOR";
+//     char* ubit = "ziyugeng";
+
+//     cse4589_print_and_log("[%s:SUCCESS]\n", command);
+//     cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
+//     cse4589_print_and_log("[%s:END]\n", command);
+// }
 
