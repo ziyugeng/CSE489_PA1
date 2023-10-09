@@ -30,6 +30,11 @@
 
 #define BACKLOG 5
 #define BUFFER_SIZE 256
+#define AUTHOR_RESPONSE "I, [your_ubit_name], have read and understood the course academic integrity policy.\n"
+
+void handle_author_command(int client_socket) {
+    send(client_socket, AUTHOR_RESPONSE, strlen(AUTHOR_RESPONSE), 0);
+}
 
 void start_server(char *port_str) {
     int server_socket, new_socket, max_fd, activity, i, n;
@@ -118,7 +123,10 @@ void start_server(char *port_str) {
                         // We got some data from a client
                         buffer[n] = '\0';
                         printf("Received message from FD %d: %s\n", i, buffer);
-                        
+                        if (strcmp(buffer, "AUTHOR\n") == 0) {
+                            // If the received command is AUTHOR, handle it accordingly.
+                            handle_author_command(i);
+                        }
                         // For simplicity, let's just echo it back
                         if (send(i, buffer, n, 0) != n) {
                             perror("send");
