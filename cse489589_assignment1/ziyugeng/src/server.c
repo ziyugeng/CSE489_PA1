@@ -123,7 +123,7 @@ void start_server(char *port_str) {
 						printf("\nI got: %s\n", cmd);
 
 
-						if(strcmp(cmd, "AUTHOR") == 0) {
+						if(cmd == "AUTHOR") {
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
 							cse4589_print_and_log("I, ziyugeng and ttu4, have read and understood the course academic integrity policy.\n");
 							cse4589_print_and_log("[AUTHOR:END]\n");
