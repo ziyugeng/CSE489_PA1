@@ -70,6 +70,17 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+void execute_shell_command(const char* command_str, const char* ubit_name) {
+    if(strcmp(command_str, "AUTHOR") == 0) {
+        cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
+        cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit_name);
+        cse4589_print_and_log("[AUTHOR:END]\n");
+    } else {
+        cse4589_print_and_log("[%s:ERROR]\n", command_str);
+        cse4589_print_and_log("[%s:END]\n", command_str);
+    }
+}
+
 
 
 // // void ip_command() {

@@ -9,7 +9,5 @@
 #define BUFFER_SIZE 256
 
 void start_server(char *port_str);
-void execute_command(char* cmd);
-void author_command(void);
 
 #endif
