@@ -29,8 +29,6 @@
 #include <sys/types.h>
 #include <netdb.h>
 
-#include "../include/client.h"
-
 #define TRUE 1
 #define MSG_SIZE 256
 #define BUFFER_SIZE 256
@@ -44,9 +42,15 @@ int connect_to_host(char *server_ip, char *server_port);
 * @param  argv The argument list
 * @return 0 EXIT_SUCCESS
 */
-void start_client(const char* ip, const char* port) {
-    int server;
-    server = connect_to_host(ip, port);
+int main(int argc, char **argv)
+{
+	if(argc != 3) {
+		printf("Usage:%s [ip] [port]\n", argv[0]);
+		exit(-1);
+	}
+	
+	int server;
+	server = connect_to_host(argv[1], argv[2]);
 	
 	while(TRUE){
 		printf("\n[PA1-Client@CSE489/589]$ ");
@@ -72,10 +76,7 @@ void start_client(const char* ip, const char* port) {
 			printf("Server responded: %s", buffer);
 			fflush(stdout);
 		}
-		free(msg);
-		free(buffer);
 	}
-
 }
 
 int connect_to_host(char *server_ip, char* server_port)
@@ -106,4 +107,38 @@ int connect_to_host(char *server_ip, char* server_port)
 	return fdsocket;
 }
 
+void start_client(char* port_str) {
+    char* server_ip = "127.0.0.1";  // assuming localhost for demonstration
+
+    int server;
+    server = connect_to_host(server_ip, port_str);
+
+    while(TRUE){
+        printf("\n[PA1-Client@CSE489/589]$ ");
+        fflush(stdout);
+
+        char *msg = (char*) malloc(sizeof(char)*MSG_SIZE);
+        memset(msg, '\0', MSG_SIZE);
+        if(fgets(msg, MSG_SIZE-1, stdin) == NULL) 
+            exit(-1);
+
+        printf("I got: %s(size:%d chars)", msg, strlen(msg));
+
+        printf("\nSENDing it to the remote server ... ");
+        if(send(server, msg, strlen(msg), 0) == strlen(msg))
+            printf("Done!\n");
+        fflush(stdout);
+
+        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+        memset(buffer, '\0', BUFFER_SIZE);
+
+        if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+            printf("Server responded: %s", buffer);
+            fflush(stdout);
+        }
+
+        free(msg);
+        free(buffer);
+    }
+}
 // The above code refers to the pa1_demo_code-client.c

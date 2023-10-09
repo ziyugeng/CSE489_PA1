@@ -30,10 +30,8 @@
 #include "../include/server.h"
 #include "../include/client.h"
 
-void start_server(char*);
-void ip_command(void);
-void author_command(void);
-
+void start_server(char* port);
+void start_client(char* port);
 
 /**
  * main function
@@ -60,11 +58,10 @@ int main(int argc, char **argv)
 	// s - server, c - client, port number
 	int port = atoi(argv[2]);
 	if (argv[1][0] == 's'){
-		start_server(argv[1]);
+		start_server(argv[2]);
 	}
 	else if(argv[1][0] == 'c'){
-		char* ip = "127.0.0.1";  
-		start_client(ip, argv[2]);
+		start_client(argv[2]);
 	}
 	else{
 		printf("Error: Please use 's' for server and 'c' for client.\n");
