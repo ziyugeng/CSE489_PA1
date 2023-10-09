@@ -37,8 +37,63 @@
 #define CMD_SIZE 100
 #define BUFFER_SIZE 256
 #define ubit "ziyugeng and ttu4"
-#define ip_addr "8.8.8.8"
+#define google_ip "8.8.8.8"
+#define google_port "53"
 
+// step1: Create a UDP socket (this is not used for sending or receiving anything!)
+// step2: connect the socket to some outside IP/port pair (I’d recommend 8.8.8.8:53 which is Google’s public DNS server). At this point, the kernel will give your UDP socket an IP which basically the first interface on a path to Google’s DNS server, and a port which is an random ephemeral port. Note that no packet is sent at all! The connect() command on an unbounded UDP socket forces the kernel to look up some information on the local routing table.
+// step3: Call getsockname() on the dummy UDP socket to get the IP out. For the name, you can just use gethostname() for simplicity. If you are more careful, you should try gethostbyaddr() on the IP address that getsockname() returns to get a consistent name/IP pair. (gethostbyaddr() does a reverse DNS look up.)
+// step4: Close the dummy UDP socket.
+// cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
+
+char* external_ip() {
+    int udp_socket;
+    char *ip_buf = malloc(INET_ADDRSTRLEN);
+    struct sockaddr_in server_addr;
+    struct sockaddr_in client_addr;
+    socklen_t addr_len = sizeof(client_addr);
+
+    if(!ip_buf) {
+        perror("Malloc failed");
+        return NULL;
+    }
+
+    udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    if(udp_socket < 0) {
+        perror("Cannot create socket");
+        free(ip_buf);
+        return NULL;
+    }
+
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = inet_addr(google_ip);
+    server_addr.sin_port = htons(google_port);
+
+    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Connect failed");
+        close(udp_socket);
+        free(ip_buf);
+        return NULL;
+    }
+
+    if(getsockname(udp_socket, (struct sockaddr*)&client_addr, &addr_len) < 0) {
+        perror("Getsockname failed");
+        close(udp_socket);
+        free(ip_buf);
+        return NULL;
+    }
+
+    if(inet_ntop(AF_INET, &(client_addr.sin_addr), ip_buf, INET_ADDRSTRLEN) == NULL) {
+        perror("Error converting IP to string");
+        close(udp_socket);
+        free(ip_buf);
+        return NULL;
+    }
+
+    close(udp_socket);
+    return ip_buf;
+}
 
 void start_server(char *port_str) {
     int server_socket, head_socket, selret, sock_index, fdaccept=0, caddr_len;
@@ -121,11 +176,12 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("[AUTHOR:END]\n");
 							} 
 						else if (strcmp(cmd, "IP") == 0){ // IP
+						char* ip_addr = external_ip();
 							cse4589_print_and_log("[IP:SUCCESS]\n");
 							cse4589_print_and_log("IP:%s\n", ip_addr);
 							cse4589_print_and_log("[IP:END]\n");
 						}
-						else if (strcmp(cmd, "PORT") == 0){
+						else if (strcmp(cmd, "PORT") == 0){ //PORT
 							cse4589_print_and_log("[PORT:SUCCESS]\n");
 							cse4589_print_and_log("PORT:%s\n", port_str);
 							cse4589_print_and_log("[PORT:END]\n");
