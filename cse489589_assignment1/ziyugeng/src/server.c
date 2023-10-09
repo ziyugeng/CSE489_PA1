@@ -30,7 +30,7 @@
 
 #define BACKLOG 5
 #define BUFFER_SIZE 256
-#define AUTHOR_RESPONSE "I, [your_ubit_name], have read and understood the course academic integrity policy.\n"
+#define AUTHOR_RESPONSE "I, ziyugeng and ttu4, have read and understood the course academic integrity policy.\n"
 
 void handle_author_command(int client_socket) {
     send(client_socket, AUTHOR_RESPONSE, strlen(AUTHOR_RESPONSE), 0);
