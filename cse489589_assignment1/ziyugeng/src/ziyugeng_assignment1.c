@@ -32,6 +32,7 @@
 
 void start_server(char* port);
 void start_client(char *server_ip, char *server_port);
+void author_command(void);
 
 
 /**
