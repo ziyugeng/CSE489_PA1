@@ -36,25 +36,6 @@
 int connect_to_host(char *server_ip, char *server_port);
 void start_client(char *server_ip, char *server_port);
 
-/**
-* main function
-*
-* @param  argc Number of arguments
-* @param  argv The argument list
-* @return 0 EXIT_SUCCESS
-*/
-int main(int argc, char **argv)
-{
-	if(argc != 3) {
-		printf("Usage:%s [ip] [port]\n", argv[0]);
-		exit(-1);
-	}
-	
-	start_client(argv[1], argv[2]);
-	
-	return 0;
-}
-
 void start_client(char *server_ip, char *server_port)
 {
 	int server;
@@ -69,7 +50,8 @@ void start_client(char *server_ip, char *server_port)
 		if(fgets(msg, MSG_SIZE-1, stdin) == NULL)
 			exit(-1);
 		
-		printf("I got: %s(size:%d chars)", msg, strlen(msg));
+		printf("I got: %s(size:%zu chars)", msg, strlen(msg));
+
 		
 		printf("\nSENDing it to the remote server ... ");
 		if(send(server, msg, strlen(msg), 0) == strlen(msg))
