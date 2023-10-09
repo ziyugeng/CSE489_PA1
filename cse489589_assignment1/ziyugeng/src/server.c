@@ -25,109 +25,149 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <strings.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <netdb.h>
 
 #define BACKLOG 5
+#define STDIN 0
+#define TRUE 1
+#define CMD_SIZE 100
 #define BUFFER_SIZE 256
 
+void execute_shell_command(const char* command_str) {
+    printf("DEBUG: Executing command: %s\n", command_str);  // Debug print
+    
+    if(strcmp(command_str, "AUTHOR") == 0) {
+        cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
+        cse4589_print_and_log("I, ziyugeng and ttu4, have read and understood the course academic integrity policy.\n");
+        cse4589_print_and_log("[AUTHOR:END]\n");
+    } else {
+        cse4589_print_and_log("[%s:ERROR]\n", command_str);
+        cse4589_print_and_log("[%s:END]\n", command_str);
+    }
+}
+
 void start_server(char *port_str) {
-    int server_socket, new_socket, max_fd, activity, i, n;
-    struct sockaddr_in server_addr;
-    struct sockaddr_storage server_storage;
-    socklen_t addr_size;
-    char buffer[BUFFER_SIZE];
-    fd_set master_fds, read_fds;
+    int server_socket, head_socket, selret, sock_index, fdaccept=0, caddr_len;
+	struct sockaddr_in client_addr;
+	struct addrinfo hints, *res;
+	fd_set master_list, watch_list;
 
-    // Convert port string to integer
-    int port = atoi(port_str);
+	/* Set up hints structure */
+	memset(&hints, 0, sizeof(hints));
+    	hints.ai_family = AF_INET;
+    	hints.ai_socktype = SOCK_STREAM;
+    	hints.ai_flags = AI_PASSIVE;
 
-    // Create socket
-    if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-        perror("Cannot create socket");
-        exit(EXIT_FAILURE);
-    }
+	/* Fill up address structures */
+	if (getaddrinfo(NULL, port_str, &hints, &res) != 0)
+		perror("getaddrinfo failed");
+	
+	/* Socket */
+	server_socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	if(server_socket < 0)
+		perror("Cannot create socket");
+	
+	/* Bind */
+	if(bind(server_socket, res->ai_addr, res->ai_addrlen) < 0 )
+		perror("Bind failed");
 
-    // Configure settings in address struct
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(port);
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    memset(server_addr.sin_zero, '\0', sizeof server_addr.sin_zero);
-
-    // Bind socket to address struct
-    if (bind(server_socket, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1) {
-        perror("Bind failed");
-        exit(EXIT_FAILURE);
-    }
-
-    // Listen on the socket
-    if (listen(server_socket, BACKLOG) == -1) {
-        perror("Listen failed");
-        exit(EXIT_FAILURE);
-    }
+	freeaddrinfo(res);
+	
+	/* Listen */
+	if(listen(server_socket, BACKLOG) < 0)
+		perror("Unable to listen on port");
+	
+	/* ---------------------------------------------------------------------------- */
+	
+	/* Zero select FD sets */
+	FD_ZERO(&master_list);
+	FD_ZERO(&watch_list);
+	
+	/* Register the listening socket */
+	FD_SET(server_socket, &master_list);
+	/* Register STDIN */
+	FD_SET(STDIN, &master_list);
+	
+	head_socket = server_socket;
     
-    // Clear the master and temp sets
-    FD_ZERO(&master_fds);
-    FD_ZERO(&read_fds);
-    
-    // Add server socket to set
-    FD_SET(server_socket, &master_fds);
-    max_fd = server_socket; // so far, it's this one
-
-    printf("Server is listening on port: %d\n", port);
-    
-    while (1) {
-        // Copy master FD set to read FD set for select()
-        read_fds = master_fds;
-        
-        // Wait for activity on any of the sockets
-        if ((activity = select(max_fd + 1, &read_fds, NULL, NULL, NULL)) < 0) {
-            perror("select failed");
-            exit(EXIT_FAILURE);
-        }
-        
-        // Check each socket for activity
-        for (i = 0; i <= max_fd; i++) {
-            if (FD_ISSET(i, &read_fds)) { // if activity
-                if (i == server_socket) {
-                    // New connection on the listening socket
-                    addr_size = sizeof server_storage;
-                    new_socket = accept(server_socket, (struct sockaddr *) &server_storage, &addr_size);
-                    
-                    if (new_socket == -1) {
-                        perror("Accept failed");
-                    } else {
-                        FD_SET(new_socket, &master_fds); // add new FD to master set
-                        if (new_socket > max_fd) { // keep track of the max FD
-                            max_fd = new_socket;
-                        }
-                        printf("New connection from socket FD %d\n", new_socket);
-                    }
-                } else {
-                    // Data from an existing client
-                    if ((n = recv(i, buffer, BUFFER_SIZE, 0)) <= 0) {
-                        // Got error or connection closed by client
-                        if (n == 0) {
-                            printf("Socket FD %d hung up\n", i);
-                        } else {
-                            perror("recv");
-                        }
-                        close(i); // bye!
-                        FD_CLR(i, &master_fds); // remove from master set
-                    } else {
-                        // We got some data from a client
-                        buffer[n] = '\0';
-                        printf("Received message from FD %d: %s\n", i, buffer);
-            
-                        // For simplicity, let's just echo it back
-                        if (send(i, buffer, n, 0) != n) {
-                            perror("send");
-                        }
-                    }
-                }
-            }
-        }
-    }
+    while (TRUE) {
+		memcpy(&watch_list, &master_list, sizeof(master_list));
+		
+		//printf("\n[PA1-Server@CSE489/589]$ ");
+		//fflush(stdout);
+		
+		/* select() system call. This will BLOCK */
+		selret = select(head_socket + 1, &watch_list, NULL, NULL, NULL);
+		if(selret < 0)
+			perror("select failed.");
+		
+		/* Check if we have sockets/STDIN to process */
+		if(selret > 0){
+			/* Loop through socket descriptors to check which ones are ready */
+			for(sock_index=0; sock_index<=head_socket; sock_index+=1){
+				
+				if(FD_ISSET(sock_index, &watch_list)){
+					
+					/* Check if new command on STDIN */
+					if (sock_index == STDIN){
+						char *cmd = (char*) malloc(sizeof(char)*CMD_SIZE);
+						
+						memset(cmd, '\0', CMD_SIZE);
+						if(fgets(cmd, CMD_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to cmd
+							exit(-1);
+						
+						printf("\nI got: %s\n", cmd);
+						
+						//Process PA1 commands here ...
+						
+						free(cmd);
+					}
+					/* Check if new client is requesting connection */
+					else if(sock_index == server_socket){
+						caddr_len = sizeof(client_addr);
+						fdaccept = accept(server_socket, (struct sockaddr *)&client_addr, &caddr_len);
+						if(fdaccept < 0)
+							perror("Accept failed.");
+						
+						printf("\nRemote Host connected!\n");                        
+						
+						/* Add to watched socket list */
+						FD_SET(fdaccept, &master_list);
+						if(fdaccept > head_socket) head_socket = fdaccept;
+					}
+					/* Read from existing clients */
+					else{
+						/* Initialize buffer to receieve response */
+						char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+						memset(buffer, '\0', BUFFER_SIZE);
+						
+						if(recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0){
+							close(sock_index);
+							printf("Remote Host terminated connection!\n");
+							
+							/* Remove from watched list */
+							FD_CLR(sock_index, &master_list);
+						}
+						else {
+							//Process incoming data from existing clients here ...
+							
+							printf("\nClient sent me: %s\n", buffer);
+							printf("ECHOing it back to the remote host ... ");
+							if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
+								printf("Done!\n");
+							fflush(stdout);
+						}
+						
+						free(buffer);
+					}
+				}
+			}
+		}
+	}
     // Close the socket before we finish
     close(server_socket);
 }
