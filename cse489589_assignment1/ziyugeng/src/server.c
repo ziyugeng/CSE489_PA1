@@ -30,11 +30,9 @@
 
 #define BACKLOG 5
 #define BUFFER_SIZE 256
-#define AUTHOR_RESPONSE "I, ziyugeng and ttu4, have read and understood the course academic integrity policy.\n"
 
-void handle_author_command(int client_socket) {
-    send(client_socket, AUTHOR_RESPONSE, strlen(AUTHOR_RESPONSE), 0);
-}
+void execute_command(char* cmd);
+void author_command();
 
 void start_server(char *port_str) {
     int server_socket, new_socket, max_fd, activity, i, n;
@@ -123,10 +121,7 @@ void start_server(char *port_str) {
                         // We got some data from a client
                         buffer[n] = '\0';
                         printf("Received message from FD %d: %s\n", i, buffer);
-                        if (strcmp(buffer, "AUTHOR\n") == 0) {
-                            // If the received command is AUTHOR, handle it accordingly.
-                            handle_author_command(i);
-                        }
+            
                         // For simplicity, let's just echo it back
                         if (send(i, buffer, n, 0) != n) {
                             perror("send");
@@ -138,5 +133,30 @@ void start_server(char *port_str) {
     }
     // Close the socket before we finish
     close(server_socket);
+}
+
+void execute_command(char* cmd) {
+    char *command_str = strtok(cmd, " \n");
+
+    if(strcmp(command_str, "AUTHOR") == 0) {
+        author_command();
+    } 
+    // Add other command comparisons here, e.g.:
+    // else if(strcmp(command_str, "ANOTHER_COMMAND") == 0) {
+    //     another_command();
+    // }
+    else {
+        printf("[%s:ERROR]\n", command_str);
+        printf("[%s:END]\n", command_str);
+    }
+}
+
+void author_command() {
+    char* command = "AUTHOR";
+    char* ubit = "ziyugeng";
+
+    printf("[%s:SUCCESS]\n", command);
+    printf("I, %s, have read and understood the course academic integrity policy.\n", ubit);
+    printf("[%s:END]\n", command);
 }
 
