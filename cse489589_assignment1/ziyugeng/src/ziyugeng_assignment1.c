@@ -71,6 +71,8 @@ int main(int argc, char **argv)
 }
 
 void execute_shell_command(const char* command_str, const char* ubit_name) {
+    printf("DEBUG: Executing command: %s\n", command_str);  // Debug print
+    
     if(strcmp(command_str, "AUTHOR") == 0) {
         cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
         cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit_name);
