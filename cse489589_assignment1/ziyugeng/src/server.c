@@ -36,7 +36,7 @@
 #define TRUE 1
 #define CMD_SIZE 100
 #define BUFFER_SIZE 256
-#define your_ubit_name "ziyugeng"
+#define your_ubit_name "ziyugeng and ttu4"
 
 
 void start_server(char *port_str) {
@@ -86,8 +86,8 @@ void start_server(char *port_str) {
     while (TRUE) {
 		memcpy(&watch_list, &master_list, sizeof(master_list));
 		
-		//printf("\n[PA1-Server@CSE489/589]$ ");
-		//fflush(stdout);
+		printf("\n[PA1-Server@CSE489/589]$ ");
+		fflush(stdout);
 		
 		/* select() system call. This will BLOCK */
 		selret = select(head_socket + 1, &watch_list, NULL, NULL, NULL);
@@ -110,6 +110,7 @@ void start_server(char *port_str) {
 							exit(-1);
 						
 						printf("\nI got: %s\n", cmd);
+						cmd[strcspn(cmd, "\n")] = 0;
 						
 						//Process PA1 commands here ...
 						// AUTHOR cmd
