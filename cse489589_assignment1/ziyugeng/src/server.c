@@ -36,7 +36,7 @@
 #define TRUE 1
 #define CMD_SIZE 100
 #define BUFFER_SIZE 256
-#define ubit "ziyugeng and ttu4"
+#define ubit "ziyugeng"
 #define google_ip "8.8.8.8"
 #define google_port "53"
 
@@ -91,6 +91,7 @@ char* get_ip() {
     close(udp_socket);
     return ip;
 }
+
 
 void start_server(char *port_str) {
     int server_socket, head_socket, selret, sock_index, fdaccept=0, caddr_len;
@@ -183,6 +184,11 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("PORT:%s\n", port_str);
 							cse4589_print_and_log("[PORT:END]\n");
 						}
+						// else if (strcmp(cmd, "LIST") == 0){//LIST
+						//     cse4589_print_and_log("[LIST:SUCCESS]\n");
+						// 	cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", list_id, hostname, ip_addr, port_num);
+						// 	cse4589_print_and_log("[LIST:END]\n");
+						// }
 						else {
 							cse4589_print_and_log("[%s:ERROR]\n", cmd);
 							cse4589_print_and_log("[%s:END]\n", cmd);
