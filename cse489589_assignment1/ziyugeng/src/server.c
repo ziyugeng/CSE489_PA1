@@ -164,7 +164,7 @@ void start_server(char *port_str) {
 							exit(-1);
 						
 						printf("\nI got: %s\n", cmd);
-						cmd[strcspn(cmd, "\n")] = 0;
+						cmd[strcspn(cmd, "\n")] = 0; // remove \n
 						
 						//Process PA1 commands here ...
 
@@ -219,12 +219,28 @@ void start_server(char *port_str) {
 						}
 						else {
 							//Process incoming data from existing clients here ...
+							buffer[strcspn(buffer, "\n")] = 0; // remove \n
 							if(strcmp(buffer, "AUTHOR") == 0) { // AUTHOR
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
 							cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
 							cse4589_print_and_log("[AUTHOR:END]\n");
 							} 
-							
+						else if (strcmp(buffer, "IP") == 0){ // IP
+				            char* ip_addr = get_ip();
+							cse4589_print_and_log("[IP:SUCCESS]\n");
+							cse4589_print_and_log("IP:%s\n", ip_addr);
+							cse4589_print_and_log("[IP:END]\n");
+						}
+						else if (strcmp(buffer, "PORT") == 0){ //PORT
+							cse4589_print_and_log("[PORT:SUCCESS]\n");
+							cse4589_print_and_log("PORT:%s\n", port_str);
+							cse4589_print_and_log("[PORT:END]\n");
+						}
+						else {
+							cse4589_print_and_log("[%s:ERROR]\n", buffer);
+							cse4589_print_and_log("[%s:END]\n", buffer);
+							}
+
 							printf("\nClient sent me: %s\n", buffer);
 							printf("ECHOing it back to the remote host ... ");
 							if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
