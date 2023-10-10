@@ -56,6 +56,11 @@ void start_client(char *server_ip, char *server_port)
 			exit(-1);
 		
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
+		
+		printf("\nSENDing it to the remote server ... ");
+		if(send(server, msg, strlen(msg), 0) == strlen(msg))
+			printf("Done!\n");
+		fflush(stdout);
 
 		msg[strcspn(msg, "\n")] = 0;
 		if(strcmp(msg, "AUTHOR") == 0) {
@@ -78,11 +83,6 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("[%s:ERROR]\n", msg);
 			cse4589_print_and_log("[%s:END]\n", msg);
 			}
-		
-		printf("\nSENDing it to the remote server ... ");
-		if(send(server, msg, strlen(msg), 0) == strlen(msg))
-			printf("Done!\n");
-		fflush(stdout);
 		
 		/* Initialize buffer to receive response */
 		char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);

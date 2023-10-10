@@ -184,11 +184,6 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("PORT:%s\n", port_str);
 							cse4589_print_and_log("[PORT:END]\n");
 						}
-						// else if (strcmp(cmd, "LIST") == 0){//LIST
-						//     cse4589_print_and_log("[LIST:SUCCESS]\n");
-						// 	cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", list_id, hostname, ip_addr, port_num);
-						// 	cse4589_print_and_log("[LIST:END]\n");
-						// }
 						else {
 							cse4589_print_and_log("[%s:ERROR]\n", cmd);
 							cse4589_print_and_log("[%s:END]\n", cmd);
@@ -224,6 +219,11 @@ void start_server(char *port_str) {
 						}
 						else {
 							//Process incoming data from existing clients here ...
+							if(strcmp(buffer, "AUTHOR") == 0) { // AUTHOR
+							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
+							cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
+							cse4589_print_and_log("[AUTHOR:END]\n");
+							} 
 							
 							printf("\nClient sent me: %s\n", buffer);
 							printf("ECHOing it back to the remote host ... ");
