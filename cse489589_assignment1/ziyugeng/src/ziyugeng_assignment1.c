@@ -57,7 +57,6 @@ int main(int argc, char **argv)
 	/*Start Here*/
 	// 3.3 Running your program
 	// s - server, c - client, port number
-	int port = atoi(argv[2]);
 	if (argv[1][0] == 's'){
 		start_server(argv[2]);
 	}
