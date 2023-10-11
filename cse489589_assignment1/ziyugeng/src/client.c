@@ -40,29 +40,16 @@ int connect_to_host(char *server_ip, char *server_port);
 void start_client(char *server_ip, char *server_port);
 #include "../include/server.h"
 
-typedef struct {
+typedef struct client {
 	int list_id;
 	char* hostname[100];
-    char* ip[16];
-    char* port;
+	char* ip[16];
+	char* port;
+	struct client* next;  // To make a linked list
 } client;
 
-void login(char *server_ip, char *server_port){
-	int server_fd = connect_to_host(server_ip, server_port);
+client* client_list_head = NULL;
 
-	client myClient;
-    myClient.list_id = 0;
-    strncpy(myClient.hostname, "myHostname", sizeof(myClient.hostname));
-    strncpy(myClient.ip, "192.168.0.1", sizeof(myClient.ip));
-    strncpy(myClient.port, "12345", sizeof(myClient.port));
-
-	if(send(server_fd, &myClient, sizeof(myClient), 0) < 0) {
-        perror("Send failed");
-        close(server_fd);
-        return;
-    }
-	close(server_fd);
-}
 
 void start_client(char *server_ip, char *server_port)
 {
@@ -107,11 +94,11 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("PORT:%s\n", server_port);
 			cse4589_print_and_log("[PORT:END]\n");
 			}
-		else if (strcmp(msg, "LOGIN") == 0){
-			login(server_ip, server_port);
-			cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-			cse4589_print_and_log("[LOGIN:END]\n");	
-		}
+		// else if (strcmp(msg, "LOGIN") == 0){
+		// 	login(server_ip, server_port);
+		// 	cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+		// 	cse4589_print_and_log("[LOGIN:END]\n");	
+		// }
 		else {
 			cse4589_print_and_log("[%s:ERROR]\n", msg);
 			cse4589_print_and_log("[%s:END]\n", msg);
