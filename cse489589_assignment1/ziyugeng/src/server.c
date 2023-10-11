@@ -238,11 +238,10 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("PORT:%s\n", port_str);
 							cse4589_print_and_log("[PORT:END]\n");
 						}
-						// else if (strcmp(buffer, "LOGIN") == 0){ //LOGIN
-						// 	cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-						// 	cse4589_print_and_log("LOGIN:%s\n", login);
-						// 	cse4589_print_and_log("[LOGIN:END]\n");
-						// }
+						else if (strcmp(buffer, "LOGIN") == 0){ //LOGIN
+							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+							cse4589_print_and_log("[LOGIN:END]\n");
+						}
 						else {
 							cse4589_print_and_log("[%s:ERROR]\n", buffer);
 							cse4589_print_and_log("[%s:END]\n", buffer);
