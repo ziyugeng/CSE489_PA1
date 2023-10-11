@@ -56,7 +56,6 @@ void start_client(char *server_ip, char *server_port)
 	int logedin = 0;
 	client client_info;
 	client_info.list_id = 0;
-	strncpy(client_info.hostname, "your_hostname", sizeof(client_info.hostname)); 
 
 	server = connect_to_host(server_ip, server_port);
 	
@@ -94,16 +93,10 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("PORT:%s\n", server_port);
 			cse4589_print_and_log("[PORT:END]\n");
 			}
-		else if (strcmp(msg, "LOGIN") == 0){
-			strncpy(client_info.ip, ip_addr, sizeof(client_info.ip));
-			strncpy(client_info.port, server_port, sizeof(client_info.port));
-			int bytes_sent = send(server, (void*)&client_info, sizeof(client), 0);
-			if(bytes_sent < 0) {
-				perror("Error sending client info to server");
-				}
-			logedin = 1; 
+		// else if (strcmp(msg, "LOGIN") == 0){
+			
 				
-		}
+		// }
 		else {
 			cse4589_print_and_log("[%s:ERROR]\n", msg);
 			cse4589_print_and_log("[%s:END]\n", msg);
