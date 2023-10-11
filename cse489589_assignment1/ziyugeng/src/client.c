@@ -45,7 +45,7 @@ typedef struct client {
 	char* hostname[100];
 	char* ip[16];
 	char* port;
-	struct client* next;  // To make a linked list
+	struct client* next;
 } client;
 
 client* client_list_head = NULL;
@@ -55,8 +55,6 @@ void start_client(char *server_ip, char *server_port)
 {
 	int server;
 	int logedin = 0;
-	client client_info;
-	client_info.list_id = 0;
 
 	server = connect_to_host(server_ip, server_port);
 	

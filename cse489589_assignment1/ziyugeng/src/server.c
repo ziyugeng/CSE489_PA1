@@ -47,50 +47,34 @@
 // step3: Call getsockname() on the dummy UDP socket to get the IP out. For the name, you can just use gethostname() for simplicity. If you are more careful, you should try gethostbyaddr() on the IP address that getsockname() returns to get a consistent name/IP pair. (gethostbyaddr() does a reverse DNS look up.)
 // step4: Close the dummy UDP socket.
 // cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
+
 char* get_ip() {
     char *ip = malloc(INET_ADDRSTRLEN);
 
     // Step 1
     int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
-    if(udp_socket < 0) {
-        perror("Cannot create socket");
-        free(ip);
-        return NULL;
-    }
+    perror("Cannot create socket");
 
     // Step 2
-    struct sockaddr_in server_addr;
-    memset(&server_addr, 0, sizeof(server_addr));
+    struct sockaddr_in server_addr = {0};
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = inet_addr(google_ip);
     server_addr.sin_port = htons(google_port);
-    
-    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Connect failed");
-        close(udp_socket);
-        free(ip);
-        return NULL;
-    }
+    connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr));
+    perror("Connect failed");
 
     // Step 3
     struct sockaddr_in local_addr;
     socklen_t addr_len = sizeof(local_addr);
-    if(getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len) < 0) {
-        perror("Getsockname failed");
-        close(udp_socket);
-        free(ip);
-        return NULL;
-    }
+    getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len);
+    perror("Getsockname failed");
 
-    if(inet_ntop(AF_INET, &(local_addr.sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
-        perror("Error converting IP to string");
-        close(udp_socket);
-        free(ip);
-        return NULL;
-    }
+    inet_ntop(AF_INET, &(local_addr.sin_addr), ip, INET_ADDRSTRLEN);
+    perror("Error converting IP to string");
 
     // Step 4
     close(udp_socket);
+
     return ip;
 }
 

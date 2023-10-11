@@ -55,8 +55,6 @@ int main(int argc, char **argv)
 	fclose(fopen(LOGFILE, "w"));
 
 	/*Start Here*/
-	// 3.3 Running your program
-	// s - server, c - client, port number
 	if (argv[1][0] == 's'){
 		start_server(argv[2]);
 	}
