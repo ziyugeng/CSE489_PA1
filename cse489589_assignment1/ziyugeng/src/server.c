@@ -39,6 +39,8 @@
 #define ubit "ziyugeng"
 #define google_ip "8.8.8.8"
 #define google_port "53"
+#define login "login successful"
+#include "../include/client.h"
 
 // step1: Create a UDP socket (this is not used for sending or receiving anything!)
 // step2: connect the socket to some outside IP/port pair (I’d recommend 8.8.8.8:53 which is Google’s public DNS server). At this point, the kernel will give your UDP socket an IP which basically the first interface on a path to Google’s DNS server, and a port which is an random ephemeral port. Note that no packet is sent at all! The connect() command on an unbounded UDP socket forces the kernel to look up some information on the local routing table.
@@ -235,6 +237,11 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("[PORT:SUCCESS]\n");
 							cse4589_print_and_log("PORT:%s\n", port_str);
 							cse4589_print_and_log("[PORT:END]\n");
+						}
+						else if (strcmp(buffer, "LOGIN") == 0){ //LOGIN
+							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+							cse4589_print_and_log("LOGIN:%s\n", login);
+							cse4589_print_and_log("[LOGIN:END]\n");
 						}
 						else {
 							cse4589_print_and_log("[%s:ERROR]\n", buffer);

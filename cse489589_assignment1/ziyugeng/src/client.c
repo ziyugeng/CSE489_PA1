@@ -35,15 +35,25 @@
 #define google_ip "8.8.8.8"
 #define google_port "53"
 #define ubit "ziyugeng"
+#define login "login successful"
 
 int connect_to_host(char *server_ip, char *server_port);
 void start_client(char *server_ip, char *server_port);
 #include "../include/server.h"
 
+typedef struct {
+	int list_id;
+	char* hostname[100];
+    char* ip[16];
+    char* port;
+} client;
+
+
 
 void start_client(char *server_ip, char *server_port)
 {
 	int server;
+	int list_id = 0;
 	server = connect_to_host(server_ip, server_port);
 	
 	while(TRUE){
@@ -79,6 +89,11 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("PORT:%s\n", server_port);
 			cse4589_print_and_log("[PORT:END]\n");
 			}
+		else if (strcmp(msg, "LOGIN") == 0){
+			cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+			cse4589_print_and_log("LOGIN:%s\n", login);
+			cse4589_print_and_log("[LOSIN:END]\n");
+		}
 		else {
 			cse4589_print_and_log("[%s:ERROR]\n", msg);
 			cse4589_print_and_log("[%s:END]\n", msg);
