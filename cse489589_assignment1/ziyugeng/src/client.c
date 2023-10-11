@@ -53,7 +53,11 @@ typedef struct {
 void start_client(char *server_ip, char *server_port)
 {
 	int server;
-	int list_id = 0;
+	int logedin = 0;
+	client client_info;
+	client_info.list_id = 0;
+	strncpy(client_info.hostname, "your_hostname", sizeof(client_info.hostname)); 
+
 	server = connect_to_host(server_ip, server_port);
 	
 	while(TRUE){
@@ -71,6 +75,7 @@ void start_client(char *server_ip, char *server_port)
 		if(send(server, msg, strlen(msg), 0) == strlen(msg))
 			printf("Done!\n");
 		fflush(stdout);
+		char* ip_addr = get_ip();
 
 		msg[strcspn(msg, "\n")] = 0;
 		if(strcmp(msg, "AUTHOR") == 0) {
@@ -79,7 +84,7 @@ void start_client(char *server_ip, char *server_port)
 		    cse4589_print_and_log("[AUTHOR:END]\n");
 			}
 		else if (strcmp(msg, "IP") == 0){
-			char* ip_addr = get_ip();
+			
 			cse4589_print_and_log("[IP:SUCCESS]\n");
 			cse4589_print_and_log("IP:%s\n", ip_addr);
 			cse4589_print_and_log("[IP:END]\n");
@@ -90,9 +95,14 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("[PORT:END]\n");
 			}
 		else if (strcmp(msg, "LOGIN") == 0){
-			cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-			cse4589_print_and_log("LOGIN:%s\n", login);
-			cse4589_print_and_log("[LOSIN:END]\n");
+			strncpy(client_info.ip, ip_addr, sizeof(client_info.ip));
+			strncpy(client_info.port, server_port, sizeof(client_info.port));
+			int bytes_sent = send(server, (void*)&client_info, sizeof(client), 0);
+			if(bytes_sent < 0) {
+				perror("Error sending client info to server");
+				}
+			logedin = 1; 
+				
 		}
 		else {
 			cse4589_print_and_log("[%s:ERROR]\n", msg);
@@ -114,8 +124,7 @@ void start_client(char *server_ip, char *server_port)
 	}
 }
 
-int connect_to_host(char *server_ip, char* server_port)
-{
+int connect_to_host(char *server_ip, char* server_port){
 	int fdsocket;
 	struct addrinfo hints, *res;
 
