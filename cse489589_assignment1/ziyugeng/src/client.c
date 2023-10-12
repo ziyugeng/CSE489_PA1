@@ -69,6 +69,9 @@ void start_client(char *server_ip, char *server_port)
 			    }
 			}
 		}
+		else{
+			cse4589_print_and_log("[LOGIN:WRONG]\n");
+		}
 
 
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
