@@ -53,30 +53,48 @@ char* get_ip() {
 
     // Step 1
     int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
-    perror("Cannot create socket");
+    if(udp_socket < 0) {
+        perror("Cannot create socket");
+        free(ip);
+        return NULL;
+    }
 
     // Step 2
-    struct sockaddr_in server_addr = {0};
+    struct sockaddr_in server_addr;
+    memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = inet_addr(google_ip);
     server_addr.sin_port = htons(google_port);
-    connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr));
-    perror("Connect failed");
+    
+    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Connect failed");
+        close(udp_socket);
+        free(ip);
+        return NULL;
+    }
 
     // Step 3
     struct sockaddr_in local_addr;
     socklen_t addr_len = sizeof(local_addr);
-    getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len);
-    perror("Getsockname failed");
+    if(getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len) < 0) {
+        perror("Getsockname failed");
+        close(udp_socket);
+        free(ip);
+        return NULL;
+    }
 
-    inet_ntop(AF_INET, &(local_addr.sin_addr), ip, INET_ADDRSTRLEN);
-    perror("Error converting IP to string");
+    if(inet_ntop(AF_INET, &(local_addr.sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
+        perror("Error converting IP to string");
+        close(udp_socket);
+        free(ip);
+        return NULL;
+    }
 
     // Step 4
     close(udp_socket);
-
     return ip;
 }
+
 
 
 void start_server(char *port_str) {
