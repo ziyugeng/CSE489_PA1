@@ -82,8 +82,6 @@ void start_client(char *server_ip, char *server_port)
 			}
 			}
 
-
-
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
 		
 		printf("\nSENDing it to the remote server ... ");
@@ -118,26 +116,6 @@ void start_client(char *server_ip, char *server_port)
 		memset(buffer, '\0', BUFFER_SIZE);
 
 		buffer[strcspn(buffer, "\n")] = 0;
-		if(strcmp(buffer, "AUTHOR") == 0) {
-			cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
-			cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
-		    cse4589_print_and_log("[AUTHOR:END]\n");
-			}
-		else if (strcmp(buffer, "IP") == 0){
-			
-			cse4589_print_and_log("[IP:SUCCESS]\n");
-			cse4589_print_and_log("IP:%s\n", ip_addr);
-			cse4589_print_and_log("[IP:END]\n");
-			}
-		else if (strcmp(buffer, "PORT") == 0){ //PORT
-			cse4589_print_and_log("[PORT:SUCCESS]\n");
-			cse4589_print_and_log("PORT:%s\n", server_port);
-			cse4589_print_and_log("[PORT:END]\n");
-			}
-		else {
-			cse4589_print_and_log("[%s:ERROR]\n", buffer);
-			cse4589_print_and_log("[%s:END]\n", buffer);
-			}
 		
 		if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
 			printf("Server responded: %s", buffer);
