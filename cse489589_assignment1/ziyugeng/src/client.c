@@ -43,7 +43,7 @@ void start_client(char *server_ip, char *server_port);
 
 void start_client(char *server_ip, char *server_port)
 {
-	int server;
+	int server = -1;
 	// server = connect_to_host(server_ip, server_port);
 	
 	while(TRUE){
