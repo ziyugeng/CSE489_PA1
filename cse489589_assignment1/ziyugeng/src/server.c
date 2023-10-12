@@ -224,6 +224,7 @@ void start_server(char *port_str) {
 						else {
 							//Process incoming data from existing clients here ...
 							buffer[strcspn(buffer, "\n")] = 0; // remove \n
+							char *login_cmd = strtok(buffer, " "); 
 							if(strcmp(buffer, "AUTHOR") == 0) { // AUTHOR
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
 							cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
@@ -240,7 +241,8 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("PORT:%s\n", port_str);
 							cse4589_print_and_log("[PORT:END]\n");
 						}
-						else if (strcmp(buffer, "LOGIN") == 0){ //LOGIN
+						
+						else if (strcmp(login_cmd , "LOGIN") == 0){ //LOGIN
 							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
 							char client_ip[INET_ADDRSTRLEN];
 							inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
