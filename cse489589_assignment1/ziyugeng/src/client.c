@@ -43,7 +43,7 @@ void start_client(char *server_ip, char *server_port);
 
 void start_client(char *server_ip, char *server_port)
 {
-	int server = -1;
+	int server;
 	// server = connect_to_host(server_ip, server_port);
 	
 	while(TRUE){
@@ -55,24 +55,23 @@ void start_client(char *server_ip, char *server_port)
 		if(fgets(msg, MSG_SIZE-1, stdin) == NULL)
 			exit(-1);
 
-		// LOGIN first 
-		msg[strcspn(msg, "\n")] = 0;
-		if(strcmp(msg, "LOGIN") == 0) {
-			char *token = strtok(msg, " "); 
-            token = strtok(NULL, " ");
-			if(token != NULL) {
-                free(server_ip);
-                server_ip = strdup(token); // Store IP
-                token = strtok(NULL, " ");
-                if(token != NULL) {
-                    free(server_port); 
-                    server_port = strdup(token);  // Store port
-                    server = connect_to_host(server_ip, server_port);
-			    }
-			}
+		msg[strcspn(msg, "\n")] = 0; // Removing newline character
+
+        char *command = strtok(msg, " "); 
+		if(strcmp(command, "LOGIN") == 0) {
+			char *new_ip = strtok(NULL, " ");
+			char *new_port = strtok(NULL, " ");
+			if(new_ip != NULL && new_port != NULL) {
+				free(server_ip);
+				 free(server_port);
+				 server_ip = strdup(new_ip);  // Store new IP
+				 server_port = strdup(new_port);  // Store new port
+				 server = connect_to_host(server_ip, server_port);
+				 }
+			else {
+				cse4589_print_and_log("[LOGIN:ERROR]\n");
+				cse4589_print_and_log("[LOGIN:END]\n");
 		}
-		else{
-			cse4589_print_and_log("[LOGIN FIRST]\n");
 		}
 
 
