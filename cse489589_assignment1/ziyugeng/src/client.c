@@ -62,17 +62,27 @@ void start_client(char *server_ip, char *server_port)
 			char *new_ip = strtok(NULL, " ");
 			char *new_port = strtok(NULL, " ");
 			if(new_ip != NULL && new_port != NULL) {
-				free(server_ip);
-				 free(server_port);
-				 server_ip = strdup(new_ip);  // Store new IP
-				 server_port = strdup(new_port);  // Store new port
-				 server = connect_to_host(server_ip, server_port);
-				 }
-			else {
-				cse4589_print_and_log("[LOGIN:ERROR]\n");
-				cse4589_print_and_log("[LOGIN:END]\n");
-		}
-		}
+				 char *old_ip = server_ip;
+				 char *old_port = server_port;
+        
+        		server_ip = strdup(new_ip);  // Store new IP
+        		server_port = strdup(new_port);  // Store new port
+
+
+        		server = connect_to_host(server_ip, server_port);
+        		if (server < 0) {
+					cse4589_print_and_log("[LOGIN:WRONFG]\n");
+				}
+        
+        free(old_ip);
+        free(old_port);
+    }
+    else {
+        cse4589_print_and_log("[LOGIN:ERROR]\n");
+        cse4589_print_and_log("[LOGIN:END]\n");
+    }
+}
+
 
 
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
