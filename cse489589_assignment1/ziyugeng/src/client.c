@@ -73,15 +73,14 @@ void start_client(char *server_ip, char *server_port)
         		if (server < 0) {
 					cse4589_print_and_log("[LOGIN:WRONFG]\n");
 				}
-        
-        free(old_ip);
-        free(old_port);
-    }
-    else {
-        cse4589_print_and_log("[LOGIN:ERROR]\n");
-        cse4589_print_and_log("[LOGIN:END]\n");
-    }
-}
+				free(old_ip);
+				free(old_port);
+				}
+			else {
+				cse4589_print_and_log("[LOGIN:ERROR]\n");
+				cse4589_print_and_log("[LOGIN:END]\n");
+			}
+			}
 
 
 
