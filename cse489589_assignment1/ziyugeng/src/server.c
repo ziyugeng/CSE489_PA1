@@ -242,6 +242,10 @@ void start_server(char *port_str) {
 						}
 						else if (strcmp(buffer, "LOGIN") == 0){ //LOGIN
 							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+							char client_ip[INET_ADDRSTRLEN];
+							inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+							int client_port = ntohs(client_addr.sin_port);
+							cse4589_print_and_log("IP: %s, Port: %d\n", client_ip, client_port);
 							cse4589_print_and_log("[LOGIN:END]\n");
 						}
 						else {

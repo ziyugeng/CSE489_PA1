@@ -40,23 +40,11 @@ int connect_to_host(char *server_ip, char *server_port);
 void start_client(char *server_ip, char *server_port);
 #include "../include/server.h"
 
-typedef struct client {
-	int list_id;
-	char* hostname[100];
-	char* ip[16];
-	char* port;
-	struct client* next;
-} client;
-
-client* client_list_head = NULL;
-
 
 void start_client(char *server_ip, char *server_port)
 {
 	int server;
-	int logedin = 0;
-
-	server = connect_to_host(server_ip, server_port);
+	// server = connect_to_host(server_ip, server_port);
 	
 	while(TRUE){
 		printf("\n[PA1-Client@CSE489/589]$ ");
@@ -66,7 +54,23 @@ void start_client(char *server_ip, char *server_port)
 		memset(msg, '\0', MSG_SIZE);
 		if(fgets(msg, MSG_SIZE-1, stdin) == NULL)
 			exit(-1);
-		
+
+		// LOGIN first 
+		msg[strcspn(msg, "\n")] = 0;
+		if(strcmp(msg, "LOGIN") == 0) {
+			char *token = strtok(msg, " "); 
+			token = strtok(NULL, " ");
+			if(token != NULL) {
+				server_ip = strdup(token); // store ip
+				token = strtok(NULL, " ");
+				if(token != NULL) {
+					server_port = strdup(token);  // store port
+			server = connect_to_host(server_ip, server_port);
+			    }
+			}
+		}
+
+
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
 		
 		printf("\nSENDing it to the remote server ... ");
@@ -75,7 +79,6 @@ void start_client(char *server_ip, char *server_port)
 		fflush(stdout);
 		char* ip_addr = get_ip();
 
-		msg[strcspn(msg, "\n")] = 0;
 		if(strcmp(msg, "AUTHOR") == 0) {
 			cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
 			cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
