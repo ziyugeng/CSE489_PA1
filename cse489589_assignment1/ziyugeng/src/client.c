@@ -59,18 +59,20 @@ void start_client(char *server_ip, char *server_port)
 		msg[strcspn(msg, "\n")] = 0;
 		if(strcmp(msg, "LOGIN") == 0) {
 			char *token = strtok(msg, " "); 
-			token = strtok(NULL, " ");
+            token = strtok(NULL, " ");
 			if(token != NULL) {
-				server_ip = strdup(token); // store ip
-				token = strtok(NULL, " ");
-				if(token != NULL) {
-					server_port = strdup(token);  // store port
-			server = connect_to_host(server_ip, server_port);
+                free(server_ip);
+                server_ip = strdup(token); // Store IP
+                token = strtok(NULL, " ");
+                if(token != NULL) {
+                    free(server_port); 
+                    server_port = strdup(token);  // Store port
+                    server = connect_to_host(server_ip, server_port);
 			    }
 			}
 		}
 		else{
-			cse4589_print_and_log("[LOGIN:WRONG]\n");
+			cse4589_print_and_log("[LOGIN FIRST]\n");
 		}
 
 
