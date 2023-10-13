@@ -49,7 +49,7 @@
 // Cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
 
 
-char* get_my_ip() {
+char* get_ip() {
     int sockfd;
     struct sockaddr_storage remoteaddr; // client address
     socklen_t addrlen = sizeof(remoteaddr);
