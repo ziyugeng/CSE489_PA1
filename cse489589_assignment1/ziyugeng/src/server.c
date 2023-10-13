@@ -53,11 +53,11 @@ char* get_ip() {
 
     // Step 1
     int udp = socket(AF_INET, SOCK_DGRAM, 0);
-    // if(udp < 0) {
-    //     printf("Error: Cannot create socket\n");
-    //     free(ip);
-    //     return NULL;
-    // }
+    if(udp < 0) {
+        printf("Error: Cannot create socket\n");
+        free(ip);
+        return NULL;
+    }
 
     // Step 2
     struct sockaddr_in s_ip;
@@ -67,35 +67,34 @@ char* get_ip() {
 
     int con = connect(udp, (struct sockaddr*)&s_ip, sizeof(s_ip));
     if(con < 0) {
-        printf("Error: Connect failed\n");
+        printf("Connect failed\n");
         close(udp);
         free(ip);
         return NULL;
     }
 
-    // Step 3: Get local address
+    // Step 3
     struct sockaddr_in my_addr;
     int len = sizeof(my_addr);
     int get_name = getsockname(udp, (struct sockaddr*)&my_addr, &len);
     if(get_name < 0) {
-        printf("Error: Getsockname failed\n");
+        printf("local address failed\n");
         close(udp);
         free(ip);
         return NULL;
     }
 
-    // Convert IP to string
     char* my_ip = inet_ntoa(my_addr.sin_addr);
     if(my_ip == NULL) {
-        printf("Error: IP to string conversion failed\n");
+        printf("to string failed\n");
         close(udp);
         free(ip);
         return NULL;
     }
 
-    strcpy(ip, my_ip); // Copy IP to allocated memory
+    strcpy(ip, my_ip);
 
-    // Step 4: Cleanup and return
+    // Step 4
     close(udp);
     return ip;
 }
