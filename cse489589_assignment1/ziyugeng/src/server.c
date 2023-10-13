@@ -48,12 +48,8 @@
 // step4: Close the dummy UDP socket.
 // cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
 
- char* get_ip() {
+char* get_ip() {
     char *ip = malloc(INET_ADDRSTRLEN);
-    if (!ip) {
-        perror("Cannot allocate memory");
-        return NULL;
-    }
 
     // Step 1
     int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -67,8 +63,8 @@
     struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr("8.8.8.8");  // Flaw: Hard-coded IP address
-    server_addr.sin_port = htons(53);  // Flaw: Hard-coded port
+    server_addr.sin_addr.s_addr = inet_addr(google_ip);
+    server_addr.sin_port = htons(google_port);
     
     if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         perror("Connect failed");
@@ -87,8 +83,13 @@
         return NULL;
     }
 
-    strcpy(ip, inet_ntoa(local_addr.sin_addr)); 
-    
+    if(inet_ntop(AF_INET, &(local_addr.sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
+        perror("Error converting IP to string");
+        close(udp_socket);
+        free(ip);
+        return NULL;
+    }
+
     // Step 4
     close(udp_socket);
     return ip;
