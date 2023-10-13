@@ -39,13 +39,14 @@
 int connect_to_host(char *server_ip, char *server_port);
 void start_client(char *server_ip, char *server_port);
 #include "../include/server.h"
+char* get_ip();
 
 
 void start_client(char *server_ip, char *server_port)
 {
 	int server;
 	// server = connect_to_host(server_ip, server_port);
-	char* ip_addr = get_ip();
+	
 	
 	while(TRUE){
 		printf("\n[PA1-Client@CSE489/589]$ ");
@@ -73,7 +74,7 @@ void start_client(char *server_ip, char *server_port)
         		cse4589_print_and_log("[LOGIN:SUCCESS]\n");
 				}
 			}
-
+        char* ip_addr = get_ip();
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
 		
 		printf("\nSENDing it to the remote server ... ");
