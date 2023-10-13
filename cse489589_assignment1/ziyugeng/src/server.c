@@ -48,56 +48,52 @@
 // step4: Close the dummy UDP socket.
 // cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
 
-char* get_ip() {
+ char* get_ip() {
     char *ip = malloc(INET_ADDRSTRLEN);
+    if (!ip) {
+        perror("Cannot allocate memory");
+        return NULL;
+    }
 
     // Step 1
-    int udp = socket(AF_INET, SOCK_DGRAM, 0);
-    if(udp < 0) {
-        printf("Error: Cannot create socket\n");
+    int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    if(udp_socket < 0) {
+        perror("Cannot create socket");
         free(ip);
         return NULL;
     }
 
     // Step 2
-    struct sockaddr_in s_ip;
-    s_ip.sin_family = AF_INET;
-    s_ip.sin_addr.s_addr = inet_addr(google_ip);
-    s_ip.sin_port = htons(google_port);
-
-    int con = connect(udp, (struct sockaddr*)&s_ip, sizeof(s_ip));
-    if(con < 0) {
-        printf("Connect failed\n");
-        close(udp);
+    struct sockaddr_in server_addr;
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = inet_addr("8.8.8.8");  // Flaw: Hard-coded IP address
+    server_addr.sin_port = htons(53);  // Flaw: Hard-coded port
+    
+    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Connect failed");
+        close(udp_socket);
         free(ip);
         return NULL;
     }
 
     // Step 3
-    struct sockaddr_in my_addr;
-    int len = sizeof(my_addr);
-    int get_name = getsockname(udp, (struct sockaddr*)&my_addr, &len);
-    if(get_name < 0) {
-        printf("local address failed\n");
-        close(udp);
+    struct sockaddr_in local_addr;
+    socklen_t addr_len = sizeof(local_addr);
+    if(getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len) < 0) {
+        perror("Getsockname failed");
+        close(udp_socket);
         free(ip);
         return NULL;
     }
 
-    char* my_ip = inet_ntoa(my_addr.sin_addr);
-    if(my_ip == NULL) {
-        printf("to string failed\n");
-        close(udp);
-        free(ip);
-        return NULL;
-    }
-
-    strcpy(ip, my_ip);
-
+    strcpy(ip, inet_ntoa(local_addr.sin_addr)); 
+    
     // Step 4
-    close(udp);
+    close(udp_socket);
     return ip;
 }
+
 
 
 
