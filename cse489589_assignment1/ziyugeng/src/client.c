@@ -63,16 +63,16 @@ void start_client(char *server_ip, char *server_port)
 		if(strcmp(command, "LOGIN") == 0) {
 			char *new_ip = strtok(NULL, " ");
 			char *new_port = strtok(NULL, " ");
-			if(new_ip != NULL && new_port != NULL) {
-				 char *old_ip = server_ip;
-				 char *old_port = server_port;
+			
+		    char *old_ip = server_ip;
+			char *old_port = server_port;
         
-        		server_ip = strdup(new_ip);  // Store new IP
-        		server_port = strdup(new_port);  // Store new port
+        	server_ip = strdup(new_ip);  // Store new IP
+        	server_port = strdup(new_port);  // Store new port
 
-        		server = connect_to_host(server_ip, server_port);
-        		cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-				}
+        	server = connect_to_host(server_ip, server_port);
+        	cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+				
 			}
         char* ip_addr = get_ip();
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
