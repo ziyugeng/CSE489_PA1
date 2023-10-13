@@ -93,7 +93,7 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("IP:%s\n", ip_addr);
 			cse4589_print_and_log("[IP:END]\n");
 			}
-		else if (msg == "PORT"){ //PORT
+		else if (strcmp(msg, "PORT") == 0){ //PORT
 			cse4589_print_and_log("[PORT:SUCCESS]\n");
 			cse4589_print_and_log("PORT:%s\n", server_port);
 			cse4589_print_and_log("[PORT:END]\n");
