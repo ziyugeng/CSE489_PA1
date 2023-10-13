@@ -52,48 +52,54 @@ char* get_ip() {
     char *ip = malloc(INET_ADDRSTRLEN);
 
     // Step 1
-    int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
-    if(udp_socket < 0) {
-        perror("Cannot create socket");
-        free(ip);
-        return NULL;
-    }
+    int udp = socket(AF_INET, SOCK_DGRAM, 0);
+    // if(udp < 0) {
+    //     printf("Error: Cannot create socket\n");
+    //     free(ip);
+    //     return NULL;
+    // }
 
     // Step 2
-    struct sockaddr_in server_addr;
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr(google_ip);
-    server_addr.sin_port = htons(google_port);
-    
-    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Connect failed");
-        close(udp_socket);
+    struct sockaddr_in s_ip;
+    s_ip.sin_family = AF_INET;
+    s_ip.sin_addr.s_addr = inet_addr(google_ip);
+    s_ip.sin_port = htons(google_port);
+
+    int con = connect(udp, (struct sockaddr*)&s_ip, sizeof(s_ip));
+    if(con < 0) {
+        printf("Error: Connect failed\n");
+        close(udp);
         free(ip);
         return NULL;
     }
 
-    // Step 3
-    struct sockaddr_in local_addr;
-    socklen_t addr_len = sizeof(local_addr);
-    if(getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len) < 0) {
-        perror("Getsockname failed");
-        close(udp_socket);
+    // Step 3: Get local address
+    struct sockaddr_in my_addr;
+    int len = sizeof(my_addr);
+    int get_name = getsockname(udp, (struct sockaddr*)&my_addr, &len);
+    if(get_name < 0) {
+        printf("Error: Getsockname failed\n");
+        close(udp);
         free(ip);
         return NULL;
     }
 
-    if(inet_ntop(AF_INET, &(local_addr.sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
-        perror("Error converting IP to string");
-        close(udp_socket);
+    // Convert IP to string
+    char* my_ip = inet_ntoa(my_addr.sin_addr);
+    if(my_ip == NULL) {
+        printf("Error: IP to string conversion failed\n");
+        close(udp);
         free(ip);
         return NULL;
     }
 
-    // Step 4
-    close(udp_socket);
+    strcpy(ip, my_ip); // Copy IP to allocated memory
+
+    // Step 4: Cleanup and return
+    close(udp);
     return ip;
 }
+
 
 
 
