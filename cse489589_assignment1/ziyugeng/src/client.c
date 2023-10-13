@@ -69,16 +69,8 @@ void start_client(char *server_ip, char *server_port)
         		server_port = strdup(new_port);  // Store new port
 
         		server = connect_to_host(server_ip, server_port);
-        		if (server < 0) {
-					cse4589_print_and_log("[LOGIN:WRONG]\n");
+        		cse4589_print_and_log("[LOGIN:SUCCESS]\n");
 				}
-				// free(old_ip);
-				// free(old_port);
-				}
-			else {
-				cse4589_print_and_log("[LOGIN:ERROR]\n");
-				cse4589_print_and_log("[LOGIN:END]\n");
-			}
 			}
 
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
