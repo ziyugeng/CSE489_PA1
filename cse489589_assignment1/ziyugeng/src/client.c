@@ -59,8 +59,8 @@ void start_client(char *server_ip, char *server_port)
 
 		msg[strcspn(msg, "\n")] = 0; // Removing newline character
 
-        char *command = strtok(msg, " "); 
-		if(strcmp(command, "LOGIN") == 0) {
+        char *login_cmd = strtok(msg, " "); 
+		if(strcmp(login_cmd, "LOGIN") == 0) {
 			char *new_ip = strtok(NULL, " ");
 			char *new_port = strtok(NULL, " ");
 			
@@ -93,7 +93,7 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("IP:%s\n", ip_addr);
 			cse4589_print_and_log("[IP:END]\n");
 			}
-		else if (strcmp(msg, "PORT") == 0){ //PORT
+		else if (msg == "PORT"){ //PORT
 			cse4589_print_and_log("[PORT:SUCCESS]\n");
 			cse4589_print_and_log("PORT:%s\n", server_port);
 			cse4589_print_and_log("[PORT:END]\n");
