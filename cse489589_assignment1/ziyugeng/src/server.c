@@ -52,23 +52,23 @@ char* get_ip() {
     char *ip = malloc(INET_ADDRSTRLEN);
 
     // Step 1
-    int udp_socket = socket(AF_INET, SOCK_DGRAM, 0);
-    if(udp_socket < 0) {
-        perror("Cannot create socket");
+    int udp = socket(AF_INET, SOCK_DGRAM, 0);
+    if(udp < 0) {
+        perror("socket incorrect");
         free(ip);
         return NULL;
     }
 
     // Step 2
-    struct sockaddr_in server_addr;
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = inet_addr(google_ip);
-    server_addr.sin_port = htons(google_port);
+    struct sockaddr_in sip;
+    memset(&sip, 0, sizeof(sip));
+    sip.sin_family = AF_INET;
+    sip.sin_addr.s_addr = inet_addr(google_ip);
+    sip.sin_port = htons(google_port);
     
-    if(connect(udp_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+    if(connect(udp, (struct sockaddr*)&sip, sizeof(sip)) < 0) {
         perror("Connect failed");
-        close(udp_socket);
+        close(udp);
         free(ip);
         return NULL;
     }
@@ -76,22 +76,22 @@ char* get_ip() {
     // Step 3
     struct sockaddr_in local_addr;
     socklen_t addr_len = sizeof(local_addr);
-    if(getsockname(udp_socket, (struct sockaddr*)&local_addr, &addr_len) < 0) {
+    if(getsockname(udp, (struct sockaddr*)&local_addr, &addr_len) < 0) {
         perror("Getsockname failed");
-        close(udp_socket);
+        close(udp);
         free(ip);
         return NULL;
     }
 
     if(inet_ntop(AF_INET, &(local_addr.sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
         perror("Error converting IP to string");
-        close(udp_socket);
+        close(udp);
         free(ip);
         return NULL;
     }
 
     // Step 4
-    close(udp_socket);
+    close(udp);
     return ip;
 }
 
