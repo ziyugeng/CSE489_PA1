@@ -42,6 +42,7 @@ void start_client(char *server_ip, char *server_port);
 char* get_ip();
 
 
+
 void start_client(char *server_ip, char *server_port)
 {
 	int server;

@@ -46,57 +46,77 @@
 // step2: connect the socket to some outside IP/port pair (I’d recommend 8.8.8.8:53 which is Google’s public DNS server). At this point, the kernel will give your UDP socket an IP which basically the first interface on a path to Google’s DNS server, and a port which is an random ephemeral port. Note that no packet is sent at all! The connect() command on an unbounded UDP socket forces the kernel to look up some information on the local routing table.
 // step3: Call getsockname() on the dummy UDP socket to get the IP out. For the name, you can just use gethostname() for simplicity. If you are more careful, you should try gethostbyaddr() on the IP address that getsockname() returns to get a consistent name/IP pair. (gethostbyaddr() does a reverse DNS look up.)
 // step4: Close the dummy UDP socket.
-// cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
+// Cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
 
-char* get_ip() {
-    char *ip = malloc(INET_ADDRSTRLEN);
 
-    // Step 1
-    int udp = socket(AF_INET, SOCK_DGRAM, 0);
-    if(udp < 0) {
-        perror("socket incorrect");
-        free(ip);
-        return NULL;
+char* get_my_ip() {
+    int sockfd;
+    struct sockaddr_storage remoteaddr; // client address
+    socklen_t addrlen = sizeof(remoteaddr);
+    char remoteIP[INET6_ADDRSTRLEN];
+    char *ip_addr;
+
+    struct addrinfo hints, *ai, *p;
+
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM; // UDP socket
+
+    // step1
+    if (getaddrinfo("8.8.8.8", "53", &hints, &ai) != 0) {
+        perror("getaddrinfo");
+        exit(EXIT_FAILURE);
     }
 
-    // Step 2
-    struct sockaddr_in sip;
-    memset(&sip, 0, sizeof(sip));
-    sip.sin_family = AF_INET;
-    sip.sin_addr.s_addr = inet_addr(google_ip);
-    sip.sin_port = htons(google_port);
-    
-    if(connect(udp, (struct sockaddr*)&sip, sizeof(sip)) < 0) {
-        perror("Connect failed");
-        close(udp);
-        free(ip);
-        return NULL;
+    for(p = ai; p != NULL; p = p->ai_next) {
+        sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if (sockfd == -1) {
+            perror("UDP: socket");
+            continue;
+        }
+        // step2
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            perror("UDP: connect");
+            continue;
+        }
+        break;
+    }
+    if (p == NULL) {
+        fprintf(stderr, "UDP: failed to bind socket\n");
+        exit(EXIT_FAILURE);
     }
 
-    // Step 3
-    struct sockaddr_in local_addr;
-    socklen_t addr_len = sizeof(local_addr);
-    if(getsockname(udp, (struct sockaddr*)&local_addr, &addr_len) < 0) {
-        perror("Getsockname failed");
-        close(udp);
-        free(ip);
-        return NULL;
+    // step3
+    if (getsockname(sockfd, (struct sockaddr*)&remoteaddr, &addrlen) == -1) {
+        perror("getsockname");
+        close(sockfd);
+        exit(EXIT_FAILURE);
     }
 
-    if(inet_ntop(AF_INET, &(local_addr.sin_addr), ip, INET_ADDRSTRLEN) == NULL) {
-        perror("Error converting IP to string");
-        close(udp);
-        free(ip);
-        return NULL;
+    if (remoteaddr.ss_family == AF_INET) {
+        struct sockaddr_in *s = (struct sockaddr_in *)&remoteaddr;
+        inet_ntop(AF_INET, &s->sin_addr, remoteIP, sizeof remoteIP);
+    }
+    else { // AF_INET6
+        struct sockaddr_in6 *s = (struct sockaddr_in6 *)&remoteaddr;
+        inet_ntop(AF_INET6, &s->sin6_addr, remoteIP, sizeof remoteIP);
+    }
+    printf("IP_ADDRESS: %s\n", remoteIP);
+
+    freeaddrinfo(ai);
+
+    // step4
+    close(sockfd);
+
+    ip_addr = strdup(remoteIP);
+    if (ip_addr == NULL) {
+        perror("strdup");
+        exit(EXIT_FAILURE);
     }
 
-    // Step 4
-    close(udp);
-    return ip;
+    return ip_addr;
 }
-
-
-
 
 
 void start_server(char *port_str) {
@@ -245,10 +265,10 @@ void start_server(char *port_str) {
 						}
 						
 						else if (strcmp(login_cmd , "LOGIN") == 0){ //LOGIN
-							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
 							char client_ip[INET_ADDRSTRLEN];
 							inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
 							int client_port = ntohs(client_addr.sin_port);
+							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
 							cse4589_print_and_log("IP: %s, Port: %d\n", client_ip, client_port);
 							cse4589_print_and_log("[LOGIN:END]\n");
 						}

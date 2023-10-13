@@ -9,5 +9,6 @@
 #define BUFFER_SIZE 256
 
 void start_server(char *port_str);
+char* get_ip();
 
 #endif
