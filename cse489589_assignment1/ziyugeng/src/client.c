@@ -57,7 +57,7 @@ int valid_port(char* port) {
 
     if (port && isnum(port)) { 
         num = atoi(port);
-        if (num >= 0 && num <= 65535) {
+        if (num >= 0 && num <= 65535) { //get the range from 10.13 OH)
             return 1;
         }
     }
@@ -95,7 +95,7 @@ int valid_ip(char *ip) {
     free(ipCopy);
 
     if ((a >= 0 && a <= 255) && (b >= 0 && b <= 255) && (c >= 0 && c <= 255) && (d >= 0 && d <= 255)) {
-        return 1;
+        return 1; //get the range from 10.13 OH)
     }
     else {
         return 0;
