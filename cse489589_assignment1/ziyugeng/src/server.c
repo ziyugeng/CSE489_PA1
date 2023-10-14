@@ -69,11 +69,23 @@ Node* insertClient(Node* head, Client new_client) {
     Node* new_node = (Node*) malloc(sizeof(Node));
 
     new_node->client = new_client;
-    new_node->next = head;
-    head = new_node;
+    new_node->next = NULL;
+
+    if (head == NULL || head->client.port_num >= new_client.port_num) {
+        new_node->next = head;
+        head = new_node;
+    } else {
+        Node* current = head;
+        while (current->next != NULL && current->next->client.port_num < new_client.port_num) {
+            current = current->next;
+        }
+        new_node->next = current->next;
+        current->next = new_node;
+    }
 
     return head;
 }
+
 
 
 char* get_ip() {
