@@ -47,7 +47,12 @@
 // step3: Call getsockname() on the dummy UDP socket to get the IP out. For the name, you can just use gethostname() for simplicity. If you are more careful, you should try gethostbyaddr() on the IP address that getsockname() returns to get a consistent name/IP pair. (gethostbyaddr() does a reverse DNS look up.)
 // step4: Close the dummy UDP socket.
 // Cite from https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/, which are provided in handout
+// The get_ip function follows the https://stackoverflow.com/questions/25879280/getting-my-own-ip-address-by-connecting-using-udp-socket, and modified based on it.
 
+// Reference
+// 1. On getting the IP & name of a machine for chatty. SUNY Buffalo Networking Course’s Blog. (2010, October 22). https://ubmnc.wordpress.com/2010/09/22/on-getting-the-ip-name-of-a-machine-for-chatty/ 
+
+// 2. EricEric2, & user207421user207421306k4444 gold badges307307 silver badges484484 bronze badges. (2014, September 18). Getting my own IP address by Connect()ing using UDP socket?. Stack Overflow. https://stackoverflow.com/questions/25879280/getting-my-own-ip-address-by-connecting-using-udp-socket 
 
 char* get_ip() {
     int sockfd;

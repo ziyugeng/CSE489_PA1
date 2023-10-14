@@ -42,6 +42,65 @@ void start_client(char *server_ip, char *server_port);
 char* get_ip();
 
 
+int isnum(char* str) {
+    while (*str) {
+        if (*str < '0' || *str > '9') {
+            return 0;
+        }
+        str++;
+    }
+    return 1;
+}
+
+int valid_port(char* port) {
+    int num;
+
+    if (port && isnum(port)) { 
+        num = atoi(port);
+        if (num >= 0 && num <= 65535) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int valid_ip(char *ip) {
+    char *first_part, *second_part, *third_part, *forth_part;
+
+    char *ipCopy = strdup(ip);
+    if (!ipCopy) {
+        return 0; 
+    }
+
+    first_part = strtok(ipCopy, ".");
+    second_part = strtok(NULL, ".");
+    third_part = strtok(NULL, ".");
+    forth_part = strtok(NULL, ".");
+
+    if (!first_part || !second_part || !third_part || !forth_part) {
+        free(ipCopy);
+        return 0;
+    }
+
+	if (!isnum(first_part) || !isnum(second_part) || !isnum(third_part) || !isnum(forth_part)) {
+        free(ipCopy);
+        return 0;
+    }
+
+    int a = atoi(first_part);
+    int b = atoi(second_part);
+    int c = atoi(third_part);
+    int d = atoi(forth_part);
+
+    free(ipCopy);
+
+    if ((a >= 0 && a <= 255) && (b >= 0 && b <= 255) && (c >= 0 && c <= 255) && (d >= 0 && d <= 255)) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
 
 void start_client(char *server_ip, char *server_port)
 {
@@ -65,16 +124,18 @@ void start_client(char *server_ip, char *server_port)
 			char *new_ip = strtok(NULL, " ");
 			char *new_port = strtok(NULL, " ");
 			
-		    char *old_ip = server_ip;
-			char *old_port = server_port;
-        
-        	server_ip = strdup(new_ip);  // Store new IP
-        	server_port = strdup(new_port);  // Store new port
+		    if (valid_ip(new_ip) && valid_port(new_port)) { 
+                server_ip = strdup(new_ip);
+                server_port = strdup(new_port); 
 
-        	server = connect_to_host(server_ip, server_port);
-        	cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-				
-			}
+                server = connect_to_host(server_ip, server_port);
+                cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+            } else {
+                cse4589_print_and_log("[LOGIN:ERROR IP or PORT]\n");
+                cse4589_print_and_log("[LOGIN:END]\n");
+            }
+		}
+
         char* ip_addr = get_ip();
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
 		
