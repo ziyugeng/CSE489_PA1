@@ -52,6 +52,30 @@
 
 // 2. EricEric2, & user207421user207421306k4444 gold badges307307 silver badges484484 bronze badges. (2014, September 18). Getting my own IP address by Connect()ing using UDP socket?. Stack Overflow. https://stackoverflow.com/questions/25879280/getting-my-own-ip-address-by-connecting-using-udp-socket 
 
+typedef struct {
+    char hostname[256];
+    char ip_addr[20];
+    int port_num;
+} Client;
+
+typedef struct node {
+    Client client;
+    struct node* next;
+} Node;
+
+    Node* head = NULL;
+
+Node* insertClient(Node* head, Client new_client) {
+    Node* new_node = (Node*) malloc(sizeof(Node));
+
+    new_node->client = new_client;
+    new_node->next = head;
+    head = new_node;
+
+    return head;
+}
+
+
 char* get_ip() {
     int sockfd;
     struct sockaddr_storage remoteaddr; // client address
@@ -215,7 +239,12 @@ void start_server(char *port_str) {
 						}
 						else if (strcmp(cmd, "LIST") == 0){ //LIST
 							cse4589_print_and_log("[LIST:SUCCESS]\n");
-							cse4589_print_and_log("LIST:%s\n", port_str);
+							Node* current = head;
+    							int list_id = 1;
+    							while (current) {
+      						cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", list_id++, current->client.hostname, current->client.ip_addr, current->client.port_num);
+        							current = current->next;
+    							}
 							cse4589_print_and_log("[LIST:END]\n");
 						}
 						else {
@@ -276,6 +305,15 @@ void start_server(char *port_str) {
 							char c_ip[INET_ADDRSTRLEN];
 							inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
 							int c_port = ntohs(client_addr.sin_port);
+							//char * hostname;
+							//hostname = gethostbyaddr((char *)&c_ip, strlen(c_ip),AF_INET);
+							char hostname[256];
+							gethostname(hostname, 256);
+							Client new_client;
+							strcpy(new_client.hostname, hostname);
+							strcpy(new_client.ip_addr, c_ip);
+							new_client.port_num = c_port;
+							head = insertClient(head, new_client);
 							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
 							cse4589_print_and_log("IP: %s, Port: %d\n", c_ip, c_port);
 							cse4589_print_and_log("[LOGIN:END]\n");
@@ -307,5 +345,3 @@ void start_server(char *port_str) {
     close(server_socket);
 }
 // The above code refers to the pa1_demo_code-servert.c
-
-
