@@ -68,7 +68,7 @@ char* get_ip() {
     hints.ai_socktype = SOCK_DGRAM; // UDP socket
 
     // step1
-    if (getaddrinfo("8.8.8.8", "53", &hints, &ai) != 0) {
+    if (getaddrinfo("google_ip", "google_port", &hints, &ai) != 0) {
         perror("getaddrinfo");
         exit(EXIT_FAILURE);
     }
@@ -87,10 +87,10 @@ char* get_ip() {
         }
         break;
     }
-    if (p == NULL) {
-        fprintf(stderr, "UDP: failed to bind socket\n");
-        exit(EXIT_FAILURE);
-    }
+    // if (p == NULL) {
+    //     fprintf(stderr, "UDP: failed to bind socket\n");
+    //     exit(EXIT_FAILURE);
+    // }
 
     // step3
     if (getsockname(sockfd, (struct sockaddr*)&remoteaddr, &addrlen) == -1) {
@@ -103,7 +103,7 @@ char* get_ip() {
         struct sockaddr_in *s = (struct sockaddr_in *)&remoteaddr;
         inet_ntop(AF_INET, &s->sin_addr, remoteIP, sizeof remoteIP);
     }
-    else { // AF_INET6
+    else {
         struct sockaddr_in6 *s = (struct sockaddr_in6 *)&remoteaddr;
         inet_ntop(AF_INET6, &s->sin6_addr, remoteIP, sizeof remoteIP);
     }
@@ -198,6 +198,9 @@ void start_server(char *port_str) {
 						cmd[strcspn(cmd, "\n")] = 0; // remove \n
 						
 						//Process PA1 commands here ...
+						char c_ip[INET_ADDRSTRLEN];
+						inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
+						int c_port = ntohs(client_addr.sin_port);
 
 						if(strcmp(cmd, "AUTHOR") == 0) { // AUTHOR
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
@@ -214,6 +217,11 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("[PORT:SUCCESS]\n");
 							cse4589_print_and_log("PORT:%s\n", port_str);
 							cse4589_print_and_log("[PORT:END]\n");
+						}
+						else if (strcmp(cmd, "LIST") == 0){ //LIST
+							cse4589_print_and_log("[LIST:SUCCESS]\n");
+							cse4589_print_and_log("LIST:%s\n", port_str);
+							cse4589_print_and_log("[LIST:END]\n");
 						}
 						else {
 							cse4589_print_and_log("[%s:ERROR]\n", cmd);
@@ -270,11 +278,11 @@ void start_server(char *port_str) {
 						}
 						
 						else if (strcmp(login_cmd , "LOGIN") == 0){ //LOGIN
-							char client_ip[INET_ADDRSTRLEN];
-							inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
-							int client_port = ntohs(client_addr.sin_port);
+							char c_ip[INET_ADDRSTRLEN];
+							inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
+							int c_port = ntohs(client_addr.sin_port);
 							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-							cse4589_print_and_log("IP: %s, Port: %d\n", client_ip, client_port);
+							cse4589_print_and_log("IP: %s, Port: %d\n", c_ip, c_port);
 							cse4589_print_and_log("[LOGIN:END]\n");
 						}
 						else if(strcmp(buffer , "EXIT") == 0){
