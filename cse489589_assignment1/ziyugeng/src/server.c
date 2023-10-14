@@ -37,9 +37,7 @@
 #define CMD_SIZE 100
 #define BUFFER_SIZE 256
 #define ubit "ziyugeng"
-#define google_ip "8.8.8.8"
-#define google_port "53"
-#define login "login successful"
+
 #include "../include/client.h"
 
 // step1: Create a UDP socket (this is not used for sending or receiving anything!)
@@ -68,7 +66,7 @@ char* get_ip() {
     hints.ai_socktype = SOCK_DGRAM; // UDP socket
 
     // step1
-    if (getaddrinfo("google_ip", "google_port", &hints, &ai) != 0) {
+    if (getaddrinfo("8.8.8.8", "53", &hints, &ai) != 0) {
         perror("getaddrinfo");
         exit(EXIT_FAILURE);
     }
@@ -282,12 +280,12 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("IP: %s, Port: %d\n", c_ip, c_port);
 							cse4589_print_and_log("[LOGIN:END]\n");
 						}
-						// else if(strcmp(buffer , "EXIT") == 0){
-						// // 	// still need to remove client info
-						// // 	close(server_socket);
-						// // 	cse4589_print_and_log("[EXIT:SUCCESS]\n");
-						// // 	cse4589_print_and_log("[EXIT:END]\n");
-						// // }
+						else if(strcmp(buffer , "EXIT") == 0){
+							// still need to remove client info
+							close(server_socket);
+							cse4589_print_and_log("[EXIT:SUCCESS]\n");
+							cse4589_print_and_log("[EXIT:END]\n");
+						}
 						else {
 							cse4589_print_and_log("[%s:ERROR]\n", buffer);
 							cse4589_print_and_log("[%s:END]\n", buffer);

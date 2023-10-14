@@ -157,12 +157,12 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("PORT:%s\n", server_port);
 			cse4589_print_and_log("[PORT:END]\n");
 			}
-		// else if (strcmp(msg, "EXIT") == 0){
-		// 	close(server); 
-		// 	cse4589_print_and_log("[EXIT:SUCCESS]\n");
-		// 	cse4589_print_and_log("[EXIT:END]\n");
-		// 	exit(0);  
-		// }
+		else if (strcmp(msg, "EXIT") == 0){
+			close(server); 
+			cse4589_print_and_log("[EXIT:SUCCESS]\n");
+			cse4589_print_and_log("[EXIT:END]\n");
+			exit(0);  
+		}
 		else {
 			cse4589_print_and_log("[%s:ERROR]\n", msg);
 			cse4589_print_and_log("[%s:END]\n", msg);
