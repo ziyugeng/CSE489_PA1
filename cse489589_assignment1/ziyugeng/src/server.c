@@ -198,9 +198,6 @@ void start_server(char *port_str) {
 						cmd[strcspn(cmd, "\n")] = 0; // remove \n
 						
 						//Process PA1 commands here ...
-						char c_ip[INET_ADDRSTRLEN];
-						inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
-						int c_port = ntohs(client_addr.sin_port);
 
 						if(strcmp(cmd, "AUTHOR") == 0) { // AUTHOR
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
