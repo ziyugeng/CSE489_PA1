@@ -42,7 +42,7 @@ void start_client(char *server_ip, char *server_port);
 char* get_ip();
 
 
-int isnum(char* str) {
+int isnum(char* str) { // check all part is number
     while (*str) {
         if (*str < '0' || *str > '9') {
             return 0;
@@ -68,9 +68,6 @@ int valid_ip(char *ip) {
     char *first_part, *second_part, *third_part, *forth_part;
 
     char *ipCopy = strdup(ip);
-    if (!ipCopy) {
-        return 0; 
-    }
 
     first_part = strtok(ipCopy, ".");
     second_part = strtok(NULL, ".");
@@ -160,6 +157,12 @@ void start_client(char *server_ip, char *server_port)
 			cse4589_print_and_log("PORT:%s\n", server_port);
 			cse4589_print_and_log("[PORT:END]\n");
 			}
+		else if (strcmp(msg, "EXIT") == 0){
+			close(server); 
+			cse4589_print_and_log("[EXIT:SUCCESS]\n");
+			cse4589_print_and_log("[EXIT:END]\n");
+			exit(0);  
+		}
 		else {
 			cse4589_print_and_log("[%s:ERROR]\n", msg);
 			cse4589_print_and_log("[%s:END]\n", msg);

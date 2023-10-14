@@ -277,6 +277,12 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("IP: %s, Port: %d\n", client_ip, client_port);
 							cse4589_print_and_log("[LOGIN:END]\n");
 						}
+						else if(strcmp(buffer , "EXIT") == 0){
+							// still need to remove client info
+							close(server_socket);
+							cse4589_print_and_log("[EXIT:SUCCESS]\n");
+							cse4589_print_and_log("[EXIT:END]\n");
+						}
 						else {
 							cse4589_print_and_log("[%s:ERROR]\n", buffer);
 							cse4589_print_and_log("[%s:END]\n", buffer);
