@@ -87,10 +87,10 @@ char* get_ip() {
         }
         break;
     }
-    // if (p == NULL) {
-    //     fprintf(stderr, "UDP: failed to bind socket\n");
-    //     exit(EXIT_FAILURE);
-    // }
+    if (p == NULL) {
+        fprintf(stderr, "UDP: failed to bind socket\n");
+        exit(EXIT_FAILURE);
+    }
 
     // step3
     if (getsockname(sockfd, (struct sockaddr*)&remoteaddr, &addrlen) == -1) {
