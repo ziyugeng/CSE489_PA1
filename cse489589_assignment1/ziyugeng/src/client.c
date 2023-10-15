@@ -117,21 +117,24 @@ void start_client(char *server_ip, char *server_port)
 		msg[strcspn(msg, "\n")] = 0; // Removing newline character
 
         char *login_cmd = strtok(msg, " "); 
-		if(strcmp(login_cmd, "LOGIN") == 0) {
-			char *new_ip = strtok(NULL, " ");
-			char *new_port = strtok(NULL, " ");
-			
-		    if (valid_ip(new_ip) && valid_port(new_port)) { 
-                server_ip = strdup(new_ip);
-                server_port = strdup(new_port); 
+        	if(strcmp(login_cmd, "LOGIN") == 0) {
+            		char *new_ip = strtok(NULL, " ");
+            		char *new_port = strtok(NULL, " ");
 
-                server = connect_to_host(server_ip, server_port);
-                cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-            } else {
-                cse4589_print_and_log("[LOGIN:ERROR IP or PORT]\n");
-                cse4589_print_and_log("[LOGIN:END]\n");
-            }
-		}
+            	if (valid_ip(new_ip) && valid_port(new_port)) { 
+                	server_ip = strdup(new_ip);
+                	server_port = strdup(new_port); 
+                	char hostname[256];
+                	gethostname(hostname, 256);
+                	send(server, hostname, strlen(hostname), 0);
+                	server = connect_to_host(server_ip, server_port);
+                	
+                	cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+            	} else {
+                	cse4589_print_and_log("[LOGIN:ERROR IP or PORT]\n");
+                	cse4589_print_and_log("[LOGIN:END]\n");
+            	}
+        	}
 
         char* ip_addr = get_ip();
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
