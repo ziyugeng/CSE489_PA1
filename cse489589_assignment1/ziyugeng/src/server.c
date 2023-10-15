@@ -64,8 +64,8 @@ typedef struct node {
 } Node;
 
     Node* head = NULL;
-    char * hostname;
-struct hostent *he;
+    //char * hostname;
+//struct hostent *he;
 
 Node* insertClient(Node* head, Client new_client) {
     Node* new_node = (Node*) malloc(sizeof(Node));
@@ -314,22 +314,24 @@ void start_server(char *port_str) {
 						}
 						
 						else if (strcmp(login_cmd , "LOGIN") == 0){ //LOGIN
-							char c_ip[INET_ADDRSTRLEN];
-							inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
-							int c_port = ntohs(client_addr.sin_port);
-							he = gethostbyaddr((char *)&c_ip, strlen(c_ip), AF_INET);
-							hostname = he->h_name;
+                            				char c_ip[INET_ADDRSTRLEN];
+                            				inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
+                            				int c_port = ntohs(client_addr.sin_port);
+
+                            				char hostname[256];
+                            				recv(server_socket, hostname, 256, 0);
 							//char hostname[256];
-							//gethostname(hostname, 256);
-							Client new_client;
-							strcpy(new_client.hostname, hostname);
-							strcpy(new_client.ip_addr, c_ip);
-							new_client.port_num = c_port;
-							head = insertClient(head, new_client);
-							cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-							cse4589_print_and_log("IP: %s, Port: %d\n", c_ip, c_port);
-							cse4589_print_and_log("[LOGIN:END]\n");
-						}
+							gethostname(hostname, 256);
+							//close(server_socket);
+                            				Client new_client;
+                            				strcpy(new_client.hostname, hostname);
+                            				strcpy(new_client.ip_addr, c_ip);
+                            				new_client.port_num = c_port;
+                            				head = insertClient(head, new_client);
+                            				cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+                            				cse4589_print_and_log("IP: %s, Port: %d\n", c_ip, c_port);
+                            				cse4589_print_and_log("[LOGIN:END]\n");
+                        			}
 						else if(strcmp(buffer , "EXIT") == 0){
 							// still need to remove client info
 							close(server_socket);
