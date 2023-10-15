@@ -121,13 +121,16 @@ void start_client(char *server_ip, char *server_port)
             		char *new_ip = strtok(NULL, " ");
             		char *new_port = strtok(NULL, " ");
 
-            	if (valid_ip(new_ip) && valid_port(new_port)) { 
+            	if (valid_ip(new_ip) && valid_port(server_port)) { 
                 	server_ip = strdup(new_ip);
-                	server_port = strdup(new_port); 
+                	char * nport = strdup(new_port);  
+                	//int port = atoi(server_port);
+                	//port = htonl(port);
                 	//char hostname[256];
                 	//gethostname(hostname, 256);
                 	//send(server, hostname, strlen(hostname), 0);
-                	server = connect_to_host(server_ip, server_port);
+                	server = connect_to_host(server_ip, nport);
+                	send(server, server_port, strlen(server_port), 0);
                 	
                 	cse4589_print_and_log("[LOGIN:SUCCESS]\n");
             	} else {
