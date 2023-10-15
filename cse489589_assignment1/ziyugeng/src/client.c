@@ -124,9 +124,9 @@ void start_client(char *server_ip, char *server_port)
             	if (valid_ip(new_ip) && valid_port(new_port)) { 
                 	server_ip = strdup(new_ip);
                 	server_port = strdup(new_port); 
-                	char hostname[256];
-                	gethostname(hostname, 256);
-                	send(server, hostname, strlen(hostname), 0);
+                	//char hostname[256];
+                	//gethostname(hostname, 256);
+                	//send(server, hostname, strlen(hostname), 0);
                 	server = connect_to_host(server_ip, server_port);
                 	
                 	cse4589_print_and_log("[LOGIN:SUCCESS]\n");
