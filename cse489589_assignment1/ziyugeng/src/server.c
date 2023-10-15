@@ -288,10 +288,12 @@ void start_server(char *port_str) {
 						/* Initialize buffer to receieve response */
 						char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
 						memset(buffer, '\0', BUFFER_SIZE);
-						char client_port_str[PORT_SIZE];
-                            			memset(client_port_str, 0, PORT_SIZE);
-                            			int bytes_received = recv(sock_index, client_port_str, PORT_SIZE - 1, 0);
-                            			int c_port = atoi(client_port_str);
+
+						// char client_port_str[PORT_SIZE];
+                        // memset(client_port_str, 0, PORT_SIZE);
+                        // int bytes_received = recv(sock_index, client_port_str, PORT_SIZE - 1, 0);
+                        // int c_port = atoi(client_port_str);
+
 						if(recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0){
 							close(sock_index);
 							printf("Remote Host terminated connection!\n");
@@ -303,6 +305,8 @@ void start_server(char *port_str) {
 							//Process incoming data from existing clients here ...
 							buffer[strcspn(buffer, "\n")] = 0; // remove \n
 							char *login_cmd = strtok(buffer, " "); 
+							
+							int c_port = atoi(buffer);
 							if(strcmp(buffer, "AUTHOR") == 0) { // AUTHOR
 							cse4589_print_and_log("[AUTHOR:SUCCESS]\n");
 							cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", ubit);
@@ -321,20 +325,12 @@ void start_server(char *port_str) {
 						}
 						
 						else if (strcmp(login_cmd , "LOGIN") == 0){ //LOGIN
-                            				char c_ip[INET_ADDRSTRLEN];
-                            				inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
-                            				printf("hello");
-                            				//char client_port_str[PORT_SIZE];
-                            				//memset(client_port_str, 0, PORT_SIZE);
-                            				//int bytes_received = recv(sock_index, client_port_str, PORT_SIZE - 1, 0);
-                            				//int c_port = atoi(client_port_str);
-							//int c_port = ntohs(client_addr.sin_port);
+                        char c_ip[INET_ADDRSTRLEN];
+                        inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
+                            				
 							
-    							//recv(server_socket, &c_port, sizeof(c_port), 0);
-							//c_port = ntohl(c_port);
-							
-                            				char hostname[256];
-                            				inet_aton(c_ip, &ip);
+                        char hostname[256];
+                        inet_aton(c_ip, &ip);
 							//char hostname[256];
 							//gethostname(hostname, 256);
 							hp = gethostbyaddr((const void *)&ip, sizeof(ip), AF_INET);
@@ -343,8 +339,7 @@ void start_server(char *port_str) {
                             				Client new_client;
                             				strcpy(new_client.hostname, hostname);
                             				strcpy(new_client.ip_addr, c_ip);
-                            				int port_n;
-    							port_n = atoi(port_str);
+                            				
                             				new_client.port_num = c_port;
                             				head = insertClient(head, new_client);
                             				cse4589_print_and_log("[LOGIN:SUCCESS]\n");
