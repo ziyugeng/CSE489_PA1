@@ -162,6 +162,7 @@ char* get_ip() {
 
 
 void start_server(char *port_str) {
+	int c_port;
     int server_socket, head_socket, selret, sock_index, fdaccept=0, caddr_len;
 	struct sockaddr_in client_addr;
 	struct addrinfo hints, *res;
@@ -267,6 +268,7 @@ void start_server(char *port_str) {
 						
 						free(cmd);
 					}
+					
 					/* Check if new client is requesting connection */
 					else if(sock_index == server_socket){
 						caddr_len = sizeof(client_addr);
@@ -275,6 +277,9 @@ void start_server(char *port_str) {
 							perror("Accept failed.");
 						
 						printf("\nRemote Host connected!\n");                        
+						
+						char client_ip[INET_ADDRSTRLEN];
+						int c_port= ntohs(client_addr.sin_port);
 						
 						/* Add to watched socket list */
 						FD_SET(fdaccept, &master_list);
@@ -289,6 +294,7 @@ void start_server(char *port_str) {
 						if(recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0){
 							close(sock_index);
 							printf("Remote Host terminated connection!\n");
+							
 							
 							/* Remove from watched list */
 							FD_CLR(sock_index, &master_list);
@@ -317,9 +323,8 @@ void start_server(char *port_str) {
 						else if (strcmp(login_cmd , "LOGIN") == 0){ //LOGIN
                             char c_ip[INET_ADDRSTRLEN];
                             inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
-							char* received_ip = strtok(NULL, " ");
-							char* cl_port = strtok(NULL, " ");
-							int c_port = atoi(cl_port);
+							// char* received_ip = strtok(NULL, " ");
+							// char* cl_port = strtok(NULL, " ");
                             // int c_port = ntohs(client_addr.sin_port);
                             char hostname[256];
                             inet_aton(c_ip, &ip);
