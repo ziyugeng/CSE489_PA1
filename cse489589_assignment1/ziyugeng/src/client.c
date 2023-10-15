@@ -117,27 +117,26 @@ void start_client(char *server_ip, char *server_port)
 		msg[strcspn(msg, "\n")] = 0; // Removing newline character
 
         char *login_cmd = strtok(msg, " "); 
-        	if(strcmp(login_cmd, "LOGIN") == 0) {
-            		char *new_ip = strtok(NULL, " ");
-            		char *new_port = strtok(NULL, " ");
+		if(strcmp(login_cmd, "LOGIN") == 0) {
+			char *new_ip = strtok(NULL, " ");
+			char *new_port = strtok(NULL, " ");
+			
+		    if (valid_ip(new_ip) && valid_port(new_port)) { 
+                server_ip = strdup(new_ip);
+                server_port = strdup(new_port); 
 
-            	if (valid_ip(new_ip) && valid_port(server_port)) { 
-                	server_ip = strdup(new_ip);
-                	char * nport = strdup(new_port);  
-                	//int port = atoi(server_port);
-                	//port = htonl(port);
-                	//char hostname[256];
-                	//gethostname(hostname, 256);
-                	//send(server, hostname, strlen(hostname), 0);
-                	server = connect_to_host(server_ip, nport);
-                	send(server, server_port, strlen(server_port), 0);
-                	
-                	cse4589_print_and_log("[LOGIN:SUCCESS]\n");
-            	} else {
-                	cse4589_print_and_log("[LOGIN:ERROR IP or PORT]\n");
-                	cse4589_print_and_log("[LOGIN:END]\n");
-            	}
-        	}
+                server = connect_to_host(server_ip, server_port);
+
+				if (send(server, server_port, strlen(server_port), 0) == -1) {
+					perror("send");
+				}
+				
+                cse4589_print_and_log("[LOGIN:SUCCESS]\n");
+            } else {
+                cse4589_print_and_log("[LOGIN:ERROR IP or PORT]\n");
+                cse4589_print_and_log("[LOGIN:END]\n");
+            }
+		}
 
         char* ip_addr = get_ip();
 		printf("I got: %s(size:%zu chars)\n", msg, strlen(msg));
@@ -215,6 +214,5 @@ int connect_to_host(char *server_ip, char* server_port){
 
 	return fdsocket;
 }
-
 
 // The above code refers to the pa1_demo_code-client.c
