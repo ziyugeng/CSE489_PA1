@@ -329,7 +329,7 @@ void start_server(char *port_str) {
                             				Client new_client;
                             				strcpy(new_client.hostname, hostname);
                             				strcpy(new_client.ip_addr, c_ip);
-                            				int port_num;
+                            				int port_n;
     							port_n = atoi(port_str);
                             				new_client.port_num = port_n;
                             				head = insertClient(head, new_client);
