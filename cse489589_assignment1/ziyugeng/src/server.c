@@ -65,7 +65,8 @@ typedef struct node {
 
     Node* head = NULL;
     //char * hostname;
-//struct hostent *he;
+struct in_addr ip;
+struct hostent *hp;
 
 Node* insertClient(Node* head, Client new_client) {
     Node* new_node = (Node*) malloc(sizeof(Node));
@@ -319,10 +320,12 @@ void start_server(char *port_str) {
                             				int c_port = ntohs(client_addr.sin_port);
 
                             				char hostname[256];
-                            				recv(server_socket, hostname, 256, 0);
+                            				inet_aton(c_ip, &ip);
 							//char hostname[256];
-							gethostname(hostname, 256);
-							//close(server_socket);
+							//gethostname(hostname, 256);
+							hp = gethostbyaddr((const void *)&ip, sizeof(ip), AF_INET);
+    							strncpy(hostname, hp->h_name, sizeof(hostname) - 1);
+    							hostname[sizeof(hostname) - 1] = '\0';
                             				Client new_client;
                             				strcpy(new_client.hostname, hostname);
                             				strcpy(new_client.ip_addr, c_ip);
