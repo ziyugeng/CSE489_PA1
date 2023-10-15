@@ -250,14 +250,12 @@ void start_server(char *port_str) {
 							cse4589_print_and_log("[PORT:END]\n");
 						}
 						else if (strcmp(cmd, "LIST") == 0){ //LIST
-							cse4589_print_and_log("[LIST:SUCCESS]\n");
 							Node* current = head;
     							int list_id = 1;
     							while (current) {
-      						cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", list_id++, current->client.hostname, current->client.ip_addr, current->client.port_num);
+      						              cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", list_id++, current->client.hostname, current->client.ip_addr, current->client.port_num);
         							current = current->next;
     							}
-							cse4589_print_and_log("[LIST:END]\n");
 						}
 						else {
 							cse4589_print_and_log("[%s:ERROR]\n", cmd);
@@ -317,10 +315,12 @@ void start_server(char *port_str) {
 							char c_ip[INET_ADDRSTRLEN];
 							inet_ntop(AF_INET, &client_addr.sin_addr, c_ip, INET_ADDRSTRLEN);
 							int c_port = ntohs(client_addr.sin_port);
-							//char * hostname;
-							//hostname = gethostbyaddr((char *)&c_ip, strlen(c_ip),AF_INET);
-							char hostname[256];
-							gethostname(hostname, 256);
+							char * hostname;
+							struct hostent *he;
+							he = gethostbyaddr((char *)&c_ip, strlen(c_ip), AF_INET);
+							hostname = he->h_name;
+							//char hostname[256];
+							//gethostname(hostname, 256);
 							Client new_client;
 							strcpy(new_client.hostname, hostname);
 							strcpy(new_client.ip_addr, c_ip);
