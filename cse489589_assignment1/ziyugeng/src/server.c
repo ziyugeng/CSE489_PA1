@@ -329,7 +329,9 @@ void start_server(char *port_str) {
                             				Client new_client;
                             				strcpy(new_client.hostname, hostname);
                             				strcpy(new_client.ip_addr, c_ip);
-                            				new_client.port_num = c_port;
+                            				int port_num;
+    							port_n = atoi(port_str);
+                            				new_client.port_num = port_n;
                             				head = insertClient(head, new_client);
                             				cse4589_print_and_log("[LOGIN:SUCCESS]\n");
                             				cse4589_print_and_log("IP: %s, Port: %d\n", c_ip, c_port);
